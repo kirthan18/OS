@@ -3,6 +3,7 @@
 USER_PROGS := \
 	cat\
 	echo\
+	apar\
 	forktest\
 	grep\
 	init\

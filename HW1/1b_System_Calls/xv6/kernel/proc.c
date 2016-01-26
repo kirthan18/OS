@@ -5,13 +5,16 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "k.h"
 
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
-} ptable;
+} ptable; 
 
 static struct proc *initproc;
+
+//extern int numprocs = 0;
 
 int nextpid = 1;
 extern void forkret(void);
@@ -443,4 +446,15 @@ procdump(void)
   }
 }
 
-
+int getnumprocs(){
+ int numprocs = 0;
+  struct proc *p; 
+ for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->state != UNUSED){
+    	  //cprintf("Process name : %s\n", p->name);
+	  //cprintf("Process state : %d\n", p->state);
+	  numprocs++;
+   }
+ }
+ return numprocs;
+}
