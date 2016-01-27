@@ -84,6 +84,10 @@ int main(int argc, char* argv[]){
 		default_case = 0;
 		filename = argv[2];
 		sort_key = atoi(argv[1]) * -1;
+		if(sort_key <= 0){
+			fprintf(stderr, BAD_CMD_LINE_PARAMETERS);
+			return FAILURE;
+		}
 		// printf("Sort key : %d\n", sort_key);
 	}
 
