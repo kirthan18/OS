@@ -1,8 +1,10 @@
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<unistd.h>
 #include<limits.h>
+#include<fcntl.h>
 
 #define ERROR "An error has occurred\n"
 
@@ -130,6 +132,98 @@ int main(int argc, char* argv[]){
 			}else{
 				print_error();
 			}
+		}else if(strcmp(cmd, "pwd") > 0){
+			//printf("\n Possibility of redirection operator!");
+			//Check if there is a redirection operator
+			int redirection_found = 0;
+			 
+			int k = 0;
+
+			while(k < strlen(cmd)){
+				//printf("\nScanning character %c", cmd[k]);
+				if(cmd[k] == '>'){
+					//printf("\nRedirection found!");
+					redirection_found = 1;
+					break;
+				}	
+				k++;
+			}
+
+			if(redirection_found == 0){
+				//Execute pwd simply!
+				//Ask Joe Cai
+				//printf("\nRedirection not found and hence printing pwd simply!");
+				cwd = getcwd(buffer, PATH_MAX + 1);
+				if(cwd != NULL){
+					printf("%s\n", cwd);
+				}else{
+					print_error();
+				}
+			}
+			//If redirection is found, get the first argument to redirect the output to and DGAF about the rest
+			//Handle specific case "pwd >"
+			int l = k + 1;
+			int space_found = 1;
+			int file_end = 0;
+			
+			while(cmd[l] == ' '){
+				//Move pointer till you see the first character!
+				//printf("\nProcessing space at index %d", l);
+				l++;
+			}
+			//printf("\nFile name starts at index %d", l);
+			int file_begin = l;
+
+			//printf("\n Command length : %luc", strlen(cmd));
+			
+			while(1){
+				//printf("\nProcessing index %d", l);
+				if( l >= strlen(cmd)){
+					file_end = l;
+					break;
+				}
+				//printf("\nParsing character %c", cmd[l]);
+				if(cmd[l] == ' '){
+					if(space_found == 0){
+						space_found = 1;
+					}else{
+						file_end = l;
+						break;
+					}
+				}else if(cmd[l] == '\0'){
+					file_end = l;
+					break;
+				}
+				l++;
+			}
+
+			/*printf("\nFile name starts at index %d", file_begin);
+			printf("\nFile name starts at index %d", file_end);*/
+			char file_name[128];
+			int x = 0;
+			int y = file_begin;
+			while(y < file_end){
+				//printf("\nFile name character : %c", cmd[y]);
+				file_name[x++] = cmd[y];
+				y++;
+			}
+			file_name[x] = '\0';
+
+			//printf("\n Argument to redirect output to : %s", file_name);
+
+			int stdout_copy = dup(STDOUT_FILENO);
+			close(STDOUT_FILENO);
+			int current_output_stream = open(file_name, O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
+			cwd = getcwd(buffer, PATH_MAX + 1);
+			if(cwd != NULL){
+				printf("%s\n", cwd);
+			}else{
+				print_error();
+			}
+			close(current_output_stream);
+			dup2(stdout_copy, 1);
+			close(stdout_copy);
+
 		}else if(strcmp(cmd, "cd") == 0){
 			//printf("\n Cd without arguments!");
  			path = getenv("HOME");
