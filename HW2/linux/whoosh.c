@@ -9,6 +9,7 @@
 char cmd[128];
 char finalcmd[128];
 int numpath;
+int path_set = 0;
 
 struct path_struct{
 	char path_var[128];
@@ -191,7 +192,7 @@ int main(int argc, char* argv[]){
 			}
 		}else if(cmd[0] == 'p' && cmd[1] == 'a' && cmd[2] == 't' && cmd[3] == 'h'){
 			 char *token = strtok(cmd, " ");
-   			i = 0;
+   			i = numpath;
 			/* walk through other tokens */
 			while( token != NULL ) 
 			{	
@@ -202,38 +203,111 @@ int main(int argc, char* argv[]){
 				token = strtok(NULL, " ");
 			}
 			numpath = i;
+			path_set = 1;
 			/*for(i = 0; i < numpath; i++){
-				printf("\n Path  = %s", spath[i].path_var);
-			}*/	
-		}else{
+				printf("Path  = %s\n", spath[i].path_var);
+			}*/
+		}else{	
 			int pid = fork();
 			//printf("\n I am CHILD with PID : %d", (int)getpid());
 			if(pid < 0){
 				print_error();
 			}else if(pid == 0){
-				//printf("\n I am CHILD with PID : %d", (int)getpid());
+				char full_path[128];
+				char token[100];
+
+				char *args[128];
+	
+				char new_cmd[128];
+				int prev_space_found = 0;
+				int i = 0;
+				int j = 0;
+				while( i < strlen(cmd)){
+					//printf("\nProcessing character  :%c", cmd[i]);
+					if(cmd[i] != ' '){
+						if(prev_space_found == 1){
+							prev_space_found = 0;			
+						}
+						new_cmd[j++] = cmd[i];
+					}else if(cmd[i] == ' '){
+						if(prev_space_found == 1){
+							i++;
+							continue;
+						}else{
+							new_cmd[j++] = cmd[i];
+							prev_space_found = 1;
+						}
+					}
+					i++;
+				}
+				new_cmd[j] = '\0';
+
+				/*printf("\n Command after removing spaces in between : %s", new_cmd);
+				printf("\n Length of new command : %d", strlen(new_cmd));*/
+	
+				i = 0;
+				j = 0;
+				int k = 0;
+
+				while(1){
+					if(new_cmd[i] == '\0'){
+						break;
+					}else if(new_cmd[i] == ' '){
+						token[k] = '\0';
+						args[j] = (char*) malloc(sizeof(char) * strlen(token));
+						strcpy(args[j], token);
+						j++;
+						k = 0;
+					}else{
+						token[k] = new_cmd[i];
+						k++;
+					}
+					i++;
+				}
+				token[k] = '\0';
+				args[j] = (char*) malloc(sizeof(char) * strlen(token));
+				strcpy(args[j], token);
+				args[j+1] = NULL;
+					
+				/*printf("\n Total no of tokens : %d", j+1);
+				for(i = 0; i <= j; i++){
+					printf("\nToken %d = %s", i, args[i]);
+				}*/
+				
+				//i = 0;
 				for(i = 0; i  < numpath; i++){
-					char full_path[128];
+					full_path[0] = '\0';
 					strcat(full_path, spath[i].path_var);
 					strcat(full_path, "/");
-					strcat(full_path, cmd);
-					printf("\n Full path :  %s", full_path);
-	
-					execv(full_path, (char*)NULL);
-					//printf("\nCrap execv failed!");
+					strcat(full_path, args[0]);
+					int file_exists = access( full_path, F_OK );
+					//printf("\n File exists : %d", file_exists);
+					if(file_exists == -1){
+						continue;
+					}
+					//printf("\n Full path : %s\n", full_path);
+					if( access( full_path, F_OK ) != -1 ) {
+						//printf("\n Path set = %d", path_set);
+						//printf("\n Command File exists!");
+						if(path_set == 1){
+							//printf("\n Going to execute execv()!\n");
+							if (execv(full_path, args) < 0){
+								exit(0);
+							}
+						}else{
+							exit(0);					
+						}
+					}/*else{
+						printf("\n Command File does not exist!\n");
+						//exit(0);					
+					}*/
+					
 				}
-
-				/*char *args[3];
-				args[0] = "/bin/ls";
-				args[1] = "-iSl";
-				args[2] = NULL;
-			
-				execv(args[0], args);*/
-
+				exit(0);
 			} else {
 				int id = wait(NULL);
-				printf("\n I am Parent with PID : %d", (int)getpid());
-				printf("\n My child's PID is %d\n", id);
+				//printf("\n I am Parent with PID : %d\n", (int)getpid());
+				//printf("\n My child's PID is %d\n", id);
 			}
 				
 			
