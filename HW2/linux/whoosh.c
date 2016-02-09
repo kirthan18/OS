@@ -12,6 +12,8 @@ char cmd[128];
 char finalcmd[128];
 int numpath;
 int path_set = 0;
+int stdout_copy;
+int current_output_stream = -1;
 
 struct path_struct{
 	char path_var[128];
@@ -98,6 +100,8 @@ int main(int argc, char* argv[]){
 	char *cwd;
 	char buffer[PATH_MAX + 1];
 	char *path;
+
+	stdout_copy = dup(STDOUT_FILENO);
 
 	if(argc > 1){
 		print_error();
@@ -307,6 +311,80 @@ int main(int argc, char* argv[]){
 			if(pid < 0){
 				print_error();
 			}else if(pid == 0){
+				
+				//Start of copy paste
+				//printf("\n Possibility of redirection operator!");
+				//Check if there is a redirection operator
+				int redirection_found = 0;
+				int redirection_index = -1;
+
+				int k = 0;
+				int file_begin = 0;
+				int file_end = 0;
+
+				while(k < strlen(cmd)){
+					//printf("\nScanning character %c", cmd[k]);
+					if(cmd[k] == '>'){
+						//printf("\nRedirection found!");
+						redirection_found = 1;
+						redirection_index = k;
+						break;
+					}	
+					k++;
+				}
+
+				// TODO - If redirection is not found, dont set the stdout
+				//If redirection is found, get the first argument to redirect the output to and DGAF about the rest
+				
+				if(redirection_found == 1){
+
+					int l = k + 1;
+					int space_found = 1;
+					
+					while(cmd[l] == ' '){
+						//Move pointer till you see the first character!
+						//printf("\nProcessing space at index %d", l);
+						l++;
+					}
+					//printf("\nFile name starts at index %d", l);
+					file_begin = l;
+
+					//printf("\n Command length : %lu", strlen(cmd));
+					
+					while(1){
+						//printf("\nProcessing index %d", l);
+						if( l >= strlen(cmd)){
+							file_end = l;
+							break;
+						}
+						//printf("\nParsing character %c", cmd[l]);
+						if(cmd[l] == ' '){
+							if(space_found == 0){
+								space_found = 1;
+							}else{
+								file_end = l;
+								break;
+							}
+						}else if(cmd[l] == '\0'){
+							file_end = l;
+							break;
+						}
+						l++;
+					}
+
+					/*printf("\nFile name starts at index %d", file_begin);*/
+					printf("\nFile name starts at index %d", file_end);
+				}
+
+				if(redirection_found == 1 && file_end != strlen(cmd)){
+					printf("\n Found many args!");
+					print_error();
+					break;
+				}
+					
+
+				//End of copy paste
+
 				char full_path[128];
 				char token[100];
 
@@ -316,19 +394,25 @@ int main(int argc, char* argv[]){
 				int prev_space_found = 0;
 				int i = 0;
 				int j = 0;
+
+				
 				while( i < strlen(cmd)){
 					//printf("\nProcessing character  :%c", cmd[i]);
-					if(cmd[i] != ' '){
+					if(cmd[i] == '>'){
+						break;
+					}else if(cmd[i] != ' '){
 						if(prev_space_found == 1){
 							prev_space_found = 0;			
 						}
 						new_cmd[j++] = cmd[i];
+						//printf("\nAdded character : %c", new_cmd[j-1]);
 					}else if(cmd[i] == ' '){
 						if(prev_space_found == 1){
 							i++;
 							continue;
 						}else{
 							new_cmd[j++] = cmd[i];
+							//printf("\nAdded character : %c", new_cmd[j-1]);
 							prev_space_found = 1;
 						}
 					}
@@ -336,12 +420,22 @@ int main(int argc, char* argv[]){
 				}
 				new_cmd[j] = '\0';
 
+				if(redirection_found == 1){
+					while( j > 0){
+						if(new_cmd[j-1] == ' '){
+							new_cmd[j-1] = '\0';
+							break;
+						}
+						j--;
+					}
+				}
+
 				/*printf("\n Command after removing spaces in between : %s", new_cmd);
-				printf("\n Length of new command : %d", strlen(new_cmd));*/
+				printf("\n Length of new command : %lu", strlen(new_cmd));*/
 	
 				i = 0;
 				j = 0;
-				int k = 0;
+				k = 0;
 
 				while(1){
 					if(new_cmd[i] == '\0'){
@@ -358,17 +452,44 @@ int main(int argc, char* argv[]){
 					}
 					i++;
 				}
+				
 				token[k] = '\0';
 				args[j] = (char*) malloc(sizeof(char) * strlen(token));
 				strcpy(args[j], token);
 				args[j+1] = NULL;
 					
 				/*printf("\n Total no of tokens : %d", j+1);
-				for(i = 0; i <= j; i++){
+				for(i = 0; i <= j + 1; i++){
 					printf("\nToken %d = %s", i, args[i]);
+					if(args[i] == NULL){
+						printf("\n Null found at token %d", i);
+					}
 				}*/
-				
-				//i = 0;
+
+				if(redirection_found){
+					char file_name[128];
+					int x = 0;
+					int y = file_begin;
+					while(y < file_end){
+						//printf("\nFile name character : %c", cmd[y]);
+						file_name[x++] = cmd[y];
+						y++;
+					}
+					file_name[x] = '\0';
+
+					//printf("\n Argument to redirect output to : %s", file_name);
+
+					stdout_copy = dup(STDOUT_FILENO);
+					close(STDOUT_FILENO);
+					current_output_stream = open(file_name, O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
+
+					//Check this 
+					if(current_output_stream == -1){
+						print_error();
+					}
+					
+				}
+
 				for(i = 0; i  < numpath; i++){
 					full_path[0] = '\0';
 					strcat(full_path, spath[i].path_var);
@@ -400,6 +521,11 @@ int main(int argc, char* argv[]){
 				exit(0);
 			} else {
 				int id = wait(NULL);
+				if(current_output_stream != -1){
+					close(current_output_stream);
+				}
+				dup2(stdout_copy, 1);
+				close(stdout_copy);
 				//printf("\n I am Parent with PID : %d\n", (int)getpid());
 				//printf("\n My child's PID is %d\n", id);
 			}
