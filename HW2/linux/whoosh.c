@@ -136,7 +136,7 @@ int main(int argc, char* argv[]){
 			}else{
 				print_error();
 			}
-		}else if(strcmp(cmd, "pwd") > 0){
+		}else if(cmd[0] == 'p' && cmd[1] == 'w' && cmd[2] == 'd' && strcmp(cmd, "pwd") > 0){
 			//printf("\n Possibility of redirection operator!");
 			//Check if there is a redirection operator
 			int redirection_found = 0;
@@ -240,7 +240,7 @@ int main(int argc, char* argv[]){
 				print_error();
 			}
 
-		}else if(cmd[0] == 'c' && cmd[1] == 'd'){
+		}else if(cmd[0] == 'c' && cmd[1] == 'd' && strcmp(cmd, "cd") > 0){
 			//printf("\n Cd with arguments!");
 			char dir[128];
 			int dir_index  = 0;
@@ -273,12 +273,15 @@ int main(int argc, char* argv[]){
 				for(i = dir_index; i < dir_end_index; i++){
 					dir[k++] = cmd[i];
 				}
+				dir[k] = '\0';
 			}else{		
 				int k = 0;
 				for(i = dir_index; i < strlen(cmd); i++){
 					dir[k++] = cmd[i];
 				}
+				dir[k] = '\0';
 			}
+			
 			//printf("\nDirectory to change to : %s", dir);
 			
 			if(chdir(dir) == 0){
@@ -372,12 +375,12 @@ int main(int argc, char* argv[]){
 						l++;
 					}
 
-					/*printf("\nFile name starts at index %d", file_begin);*/
-					printf("\nFile name starts at index %d", file_end);
+					/*printf("\nFile name starts at index %d", file_begin);
+					printf("\nFile name starts at index %d", file_end);*/
 				}
 
 				if(redirection_found == 1 && file_end != strlen(cmd)){
-					printf("\n Found many args!");
+					//printf("\n Found many args!");
 					print_error();
 					break;
 				}
