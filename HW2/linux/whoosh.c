@@ -501,6 +501,8 @@ int main(int argc, char* argv[]){
 					int file_exists = access( full_path, F_OK );
 					//printf("\n File exists : %d", file_exists);
 					if(file_exists == -1){
+						//TODO check with joe if error should be printed for /usr/bin and all other invalid paths
+						print_error();
 						continue;
 					}
 					//printf("\n Full path : %s\n", full_path);
@@ -523,7 +525,8 @@ int main(int argc, char* argv[]){
 				}
 				exit(0);
 			} else {
-				int id = wait(NULL);
+				//int id = wait(NULL);
+				wait(NULL);
 				if(current_output_stream != -1){
 					close(current_output_stream);
 				}
