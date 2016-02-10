@@ -5,6 +5,7 @@
 #include<unistd.h>
 #include<limits.h>
 #include<fcntl.h>
+#include<sys/wait.h>
 
 #define ERROR "An error has occurred\n"
 
@@ -539,5 +540,5 @@ int main(int argc, char* argv[]){
 			
 		}
 	}
-	
+	return 1;
 }
