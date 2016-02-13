@@ -9,11 +9,12 @@
 
 #define ERROR "An error has occurred\n"
 
-char cmd[128];
-char finalcmd[128];
+char cmd[129];
+char finalcmd[129];
 int numpath;
 int path_set = 0;
 int stdout_copy;
+int stderr_copy;
 int current_output_stream = -1;
 
 struct path_struct{
@@ -25,7 +26,7 @@ void remove_leading_spaces(){
 	int i = 0, j =0;
 
 	while(1){
-		if(cmd[i] == ' '){
+		if(cmd[i] == ' ' || cmd[i] == '\t'){
 			//printf("\n Space encountered!");
 			leading_space++;
 		}else if(cmd[i] == '\0'){
@@ -60,7 +61,7 @@ void remove_trailing_spaces(){
 	int i = strlen(cmd) - 1;
 	
 	while(i >= 0){
-		if(cmd[i] == ' '){
+		if(cmd[i] == ' ' || cmd[i] == '\t'){
 			//printf("\n Space encountered!");
 			trailing_space++;
 		}else if(cmd[i] == '\0'){
@@ -103,18 +104,32 @@ int main(int argc, char* argv[]){
 	char *path;
 
 	stdout_copy = dup(STDOUT_FILENO);
+	strcpy(spath[1].path_var, "/bin");
+	numpath = 2;
+	path_set = 1;
 
 	if(argc > 1){
 		print_error();
 		return 1;
 	}
 	while(1){
-		printf("whoosh>");
+		//printf("Inside WHILE!\n");
+		//printf("whoosh> ");
+		write(STDOUT_FILENO, "whoosh> ", 8);
+		cmd[128] = '\0';
 		gets(cmd);
-		//printf("The command you entered : %s\n",cmd); 
 		
-		if(cmd[127] != '\0'){
-			printf("\n Command longer than 128 characters!");
+		/*fgets(cmd, 129, stdin);
+		if(cmd[strlen(cmd) - 1] == '\n'){
+			cmd[strlen(cmd) - 1] = '\0';
+		}*/
+
+		/*printf("The command you entered : %s\n",cmd);
+		printf("The length of command you entered : %d\n", strlen(cmd)); */
+		
+		if(cmd[128] != '\0'){
+			/*printf("\nCharacter at last position is %c", cmd[127]);
+			printf("\n Command longer than 128 characters!");*/
 			continue;
 		}else{
 			//printf("\n Last character is null");
@@ -127,13 +142,19 @@ int main(int argc, char* argv[]){
 		if(strlen(cmd) == 0){
 			continue;
 		}
-
+		/*if(strcmp(cmd, "uname") == 0){
+			write(STDOUT_FILENO, "Linux\n", 6);
+		}*/
 		if(strcmp(cmd, "exit") == 0){
+		//if(cmd[0] == 'e' && cmd[1] == 'x' && cmd[2] == 'i' && cmd[3] == 't'){
+			//printf("\n Going to execute exit!");
 			exit(0);
 		}else if(strcmp(cmd, "pwd") == 0){
 			cwd = getcwd(buffer, PATH_MAX + 1);
 			if(cwd != NULL){
-				printf("%s\n", cwd);
+				strcat(cwd, "\n");
+				write(STDOUT_FILENO, cwd, strlen(cwd));
+				//printf("%s\n", cwd);
 			}else{
 				print_error();
 			}
@@ -160,7 +181,9 @@ int main(int argc, char* argv[]){
 				//printf("\nRedirection not found and hence printing pwd simply!");
 				cwd = getcwd(buffer, PATH_MAX + 1);
 				if(cwd != NULL){
-					printf("%s\n", cwd);
+					strcat(cwd, "\n");
+					write(STDOUT_FILENO, cwd, strlen(cwd));
+					//printf("%s\n", cwd);
 				}else{
 					print_error();
 				}
@@ -221,7 +244,9 @@ int main(int argc, char* argv[]){
 			int current_output_stream = open(file_name, O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
 			cwd = getcwd(buffer, PATH_MAX + 1);
 			if(cwd != NULL){
-				printf("%s\n", cwd);
+				strcat(cwd, "\n");
+				write(STDOUT_FILENO, cwd, strlen(cwd));								
+				//printf("%s\n", cwd);
 			}else{
 				print_error();
 			}
@@ -329,7 +354,7 @@ int main(int argc, char* argv[]){
 				while(k < strlen(cmd)){
 					//printf("\nScanning character %c", cmd[k]);
 					if(cmd[k] == '>'){
-						//printf("\nRedirection found!");
+						//printf("\nRedirection found at index %d!", k);
 						redirection_found = 1;
 						redirection_index = k;
 						break;
@@ -380,8 +405,45 @@ int main(int argc, char* argv[]){
 					printf("\nFile name starts at index %d", file_end);*/
 				}
 
-				if(redirection_found == 1 && file_end != strlen(cmd)){
+				if((redirection_found == 1 && file_end != strlen(cmd))  || (redirection_found == 1 && 		redirection_index == strlen(cmd)-1)){
 					//printf("\n Found many args!");
+					dup2(stderr_copy, 1);					
+					close(STDERR_FILENO);
+
+					char out_file_name[128];
+					char err_file_name[128];
+					int x = 0;
+					int y = file_begin;
+					while(y < file_end){
+						//printf("\nFile name character : %c", cmd[y]);
+						if(cmd[y] == '.'){
+							break;
+						}
+						out_file_name[x] = cmd[y];
+						err_file_name[x++] = cmd[y];
+						y++;
+					}
+
+					out_file_name[x] = '.';
+					err_file_name[x++] = '.';
+					
+					out_file_name[x] = 'o';
+					err_file_name[x++] = 'e';
+
+					out_file_name[x] = 'u';
+					err_file_name[x++] = 'r';
+					
+					out_file_name[x] = 't';
+					err_file_name[x++] = 'r';
+
+					out_file_name[x] = '\0';
+					err_file_name[x] = '\0';
+					
+					/*printf("\n Argument to redirect output to : %s", out_file_name);
+					printf("\n Argument to redirect error to : %s", err_file_name);*/
+					
+					int current_error_stream;
+					current_error_stream  = open(err_file_name, O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
 					print_error();
 					break;
 				}
@@ -471,26 +533,52 @@ int main(int argc, char* argv[]){
 				}*/
 
 				if(redirection_found){
-					char file_name[128];
+					char out_file_name[128];
+					char err_file_name[128];
 					int x = 0;
 					int y = file_begin;
 					while(y < file_end){
 						//printf("\nFile name character : %c", cmd[y]);
-						file_name[x++] = cmd[y];
+						out_file_name[x] = cmd[y];
+						err_file_name[x++] = cmd[y];
 						y++;
 					}
-					file_name[x] = '\0';
 
-					//printf("\n Argument to redirect output to : %s", file_name);
+					out_file_name[x] = '.';
+					err_file_name[x++] = '.';
+					
+					out_file_name[x] = 'o';
+					err_file_name[x++] = 'e';
+
+					out_file_name[x] = 'u';
+					err_file_name[x++] = 'r';
+					
+					out_file_name[x] = 't';
+					err_file_name[x++] = 'r';
+
+					out_file_name[x] = '\0';
+					err_file_name[x] = '\0';
+
+
+					/*printf("\n Argument to redirect output to : %s", out_file_name);
+					printf("\n Argument to redirect error to : %s", err_file_name);*/
 
 					stdout_copy = dup(STDOUT_FILENO);
 					close(STDOUT_FILENO);
-					current_output_stream = open(file_name, O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
+					current_output_stream = open(out_file_name, O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
 
 					//Check this 
 					if(current_output_stream == -1){
 						print_error();
 					}
+					close(STDERR_FILENO);
+	
+					int current_error_stream;
+					current_error_stream  = open(err_file_name, O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
+					if(current_error_stream == -1){
+						print_error();
+					}
+					//write(STDERR_FILENO, "/bin/",5);
 					
 				}
 
@@ -503,7 +591,7 @@ int main(int argc, char* argv[]){
 					//printf("\n File exists : %d", file_exists);
 					if(file_exists == -1){
 						//TODO check with joe if error should be printed for /usr/bin and all other invalid paths
-						print_error();
+						//print_error();
 						continue;
 					}
 					//printf("\n Full path : %s\n", full_path);
@@ -518,10 +606,11 @@ int main(int argc, char* argv[]){
 						}else{
 							exit(0);					
 						}
-					}/*else{
-						printf("\n Command File does not exist!\n");
+					}else{
+						//printf("\n Command File does not exist!\n");
+						print_error();
 						//exit(0);					
-					}*/
+					}
 					
 				}
 				exit(0);
