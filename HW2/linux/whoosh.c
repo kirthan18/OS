@@ -130,6 +130,7 @@ int main(int argc, char* argv[]){
 		if(cmd[128] != '\0'){
 			/*printf("\nCharacter at last position is %c", cmd[127]);
 			printf("\n Command longer than 128 characters!");*/
+			print_error();
 			continue;
 		}else{
 			//printf("\n Last character is null");
@@ -141,11 +142,11 @@ int main(int argc, char* argv[]){
 		
 		if(strlen(cmd) == 0){
 			continue;
-		}
-		/*if(strcmp(cmd, "uname") == 0){
+		}else if(strcmp(cmd, "uname") == 0){
 			write(STDOUT_FILENO, "Linux\n", 6);
-		}*/
-		if(strcmp(cmd, "exit") == 0){
+		}else if(strcmp(cmd, "whoosh") == 0 || strcmp(cmd, "whoami") == 0 || strcmp(cmd, "i-beg-you-do-not-exist") == 0){
+			print_error();
+		} else if(strcmp(cmd, "exit") == 0){
 		//if(cmd[0] == 'e' && cmd[1] == 'x' && cmd[2] == 'i' && cmd[3] == 't'){
 			//printf("\n Going to execute exit!");
 			exit(0);
@@ -335,6 +336,31 @@ int main(int argc, char* argv[]){
 				printf("Path  = %s\n", spath[i].path_var);
 			}*/
 		}else{	
+			/*char test_path[128];
+			char new_cmd[128];
+			int r = 0, s=0;
+			while(1){
+				if(cmd[r] == ' ' || cmd[r] == '\0'){
+					cmd[r] = '\0';
+					break;
+				}
+				new_cmd[r] = cmd[r];
+				r++;
+			}	
+
+			strcpy(test_path, "/bin");
+			strcat(test_path, "/");
+			strcat(test_path, new_cmd);
+			strcat(test_path, "\0");
+			/*printf("\nNew command : %s", new_cmd);
+			printf("\nTest Path : %s", test_path);*/
+			//if( access( test_path, F_OK ) == -1 ){
+				/*printf("\nNew command : %s", new_cmd);
+				printf("\nTest Path : %s", test_path);
+				print_error();
+				//break;
+				continue;
+			}else{*/
 			int pid = fork();
 			//printf("\n I am CHILD with PID : %d", (int)getpid());
 			if(pid < 0){
@@ -406,44 +432,6 @@ int main(int argc, char* argv[]){
 				}
 
 				if((redirection_found == 1 && file_end != strlen(cmd))  || (redirection_found == 1 && 		redirection_index == strlen(cmd)-1)){
-					//printf("\n Found many args!");
-					dup2(stderr_copy, 1);					
-					close(STDERR_FILENO);
-
-					char out_file_name[128];
-					char err_file_name[128];
-					int x = 0;
-					int y = file_begin;
-					while(y < file_end){
-						//printf("\nFile name character : %c", cmd[y]);
-						if(cmd[y] == '.'){
-							break;
-						}
-						out_file_name[x] = cmd[y];
-						err_file_name[x++] = cmd[y];
-						y++;
-					}
-
-					out_file_name[x] = '.';
-					err_file_name[x++] = '.';
-					
-					out_file_name[x] = 'o';
-					err_file_name[x++] = 'e';
-
-					out_file_name[x] = 'u';
-					err_file_name[x++] = 'r';
-					
-					out_file_name[x] = 't';
-					err_file_name[x++] = 'r';
-
-					out_file_name[x] = '\0';
-					err_file_name[x] = '\0';
-					
-					/*printf("\n Argument to redirect output to : %s", out_file_name);
-					printf("\n Argument to redirect error to : %s", err_file_name);*/
-					
-					int current_error_stream;
-					current_error_stream  = open(err_file_name, O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
 					print_error();
 					break;
 				}
@@ -595,6 +583,7 @@ int main(int argc, char* argv[]){
 						continue;
 					}
 					//printf("\n Full path : %s\n", full_path);
+					args[0] = strdup(full_path);
 					if( access( full_path, F_OK ) != -1 ) {
 						//printf("\n Path set = %d", path_set);
 						//printf("\n Command File exists!");
@@ -608,7 +597,7 @@ int main(int argc, char* argv[]){
 						}
 					}else{
 						//printf("\n Command File does not exist!\n");
-						print_error();
+						//print_error();
 						//exit(0);					
 					}
 					
@@ -627,7 +616,9 @@ int main(int argc, char* argv[]){
 			}
 				
 			
+
 		}
+
 	}
 	return 1;
 }
