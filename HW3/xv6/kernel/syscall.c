@@ -16,7 +16,8 @@
 // Fetch the int at addr from process p.
 int
 fetchint(struct proc *p, uint addr, int *ip)
-{
+{ 
+  //cprintf("\n Address in fetchint = %d", addr);
   if(addr >= p->sz || addr+4 > p->sz)
     return -1;
   *ip = *(int*)(addr);
@@ -30,7 +31,7 @@ int
 fetchstr(struct proc *p, uint addr, char **pp)
 {
   char *s, *ep;
-
+  //cprintf("\n Address in fetchstr = %d", addr);
   if(addr >= p->sz)
     return -1;
   *pp = (char*)addr;
@@ -58,7 +59,10 @@ argptr(int n, char **pp, int size)
   
   if(argint(n, &i) < 0)
     return -1;
-  if((uint)i >= proc->sz || (uint)i+size > proc->sz)
+  //cprintf("\n Address in argint = %d", i);
+  if(i >= 0 && i <= 4095)
+    return -1; 
+  if((uint)i >= proc->sz || (uint)i+size > proc->sz )
     return -1;
   *pp = (char*)i;
   return 0;
@@ -74,6 +78,9 @@ argstr(int n, char **pp)
   int addr;
   if(argint(n, &addr) < 0)
     return -1;
+  //cprintf("\n Address in argstr = %d", addr);
+  /*if(addr >= 0 && addr <= 4095)
+    return -1;*/ 
   return fetchstr(proc, addr, pp);
 }
 
