@@ -25,6 +25,8 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int shmem_count(int);
+void *shmem_access(int);
 
 // user library functions (ulib.c)
 int stat(char*, struct stat*);

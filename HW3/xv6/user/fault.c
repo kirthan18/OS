@@ -36,8 +36,15 @@ main(int argc, char *argv[])
   //assert(write(fd, arg, 1024) == -1);*/
 
   /* spanning null page and code */
-  arg = (char*) 0xfff;
-  printf(1, "\nwrite with 0xfff returns : %d",(write(fd, arg, 2)));
+  arg = (char*) 0x1100;
+  printf(1, "\nwrite with 0x1100 returns : %d",(write(fd, arg, 2)));
   //assert(write(fd, arg, 2) == -1);*/
+
+  printf(1,"\nShared mem count of page 0 : %d", shmem_count(0));
+  printf(1,"\nShared mem count of page 1 : %d", shmem_count(1));
+  printf(1,"\nShared mem count of page 2 : %d", shmem_count(2));
+  printf(1,"\nShared mem count of page 3 : %d", shmem_count(3));
+  printf(1,"\nShared mem count of page 4 : %d", shmem_count(4));
+  printf(1,"\nShared mem count of page -1 : %d", shmem_count(-1));
   exit();
 }

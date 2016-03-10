@@ -14,30 +14,37 @@
 int
 main(int argc, char *argv[])
 {
-  int* i = 0;
+  /*int* i = 0;
   int a = 99;
-  int *b = &a;
-  /*char *arg;
+  int *b = &a;*/
+  char *arg;
   int fd = open("tmp", O_WRONLY|O_CREATE);
   
   assert(fd != -1);
-  printf(1, "File allocated successfully!");*/
+  printf(1, "File allocated successfully!");
   
-  printf(1, "\nContent in b: %x",b);
+  /*printf(1, "\nContent in b: %x",b);
   printf(1, "\nContent in a : %d", *b);
-  printf(1, "\nContent in i : %x", *i);
+  printf(1, "\nContent in i : %x", *i);*/
 
-  /*arg = (char*) 0x0;
+  arg = (char*) 0x0;
   printf(1, "\nwrite with 0x00 returns : %d",(write(fd, arg, 10)));
 
   /* within null page */
-  /*arg = (char*) 0x400;
+  arg = (char*) 0x400;
   printf(1, "\nwrite with 0x400 returns : %d",(write(fd, arg, 1024)));
-  //assert(write(fd, arg, 1024) == -1);
+  //assert(write(fd, arg, 1024) == -1);*/
 
   /* spanning null page and code */
-  /*arg = (char*) 0xfff;
+  arg = (char*) 0xfff;
   printf(1, "\nwrite with 0xfff returns : %d",(write(fd, arg, 2)));
   //assert(write(fd, arg, 2) == -1);*/
+
+  printf(1,"\nShared mem count of page 0 : %d", shmem_count(0));
+  printf(1,"\nShared mem count of page 1 : %d", shmem_count(1));
+  printf(1,"\nShared mem count of page 2 : %d", shmem_count(2));
+  printf(1,"\nShared mem count of page 3 : %d", shmem_count(3));
+  printf(1,"\nShared mem count of page 4 : %d", shmem_count(4));
+  printf(1,"\nShared mem count of page -1 : %d", shmem_count(-1));
   exit();
 }

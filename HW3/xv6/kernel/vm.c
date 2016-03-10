@@ -10,6 +10,9 @@ extern char data[];  // defined in data.S
 
 static pde_t *kpgdir;  // for use in scheduler()
 
+int shmem_count[SHMEM_PAGES];
+void* shmem_addr[SHMEM_PAGES];
+
 // Allocate one page table for the machine for the kernel address
 // space for scheduler processes.
 void
@@ -364,3 +367,46 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   }
   return 0;
 }
+
+//Initialize shared memory
+void
+shmeminit()
+{
+  cprintf("shmeminit()\n");
+  int i;
+  for(i = 0; i < SHMEM_PAGES; i++)
+  {
+    shmem_count[i] = 0;
+    if((shmem_addr[i] = kalloc()) == 0)
+      panic("shmem init failed!\n");
+    cprintf("Address of page %d is %x.\n", i, (unsigned int)shmem_addr[i]);
+  }
+}
+
+int
+get_shmem_count(int page_number)
+{
+  if(page_number < 0 || page_number > 3)
+    return -1;
+
+  return shmem_count[page_number];  
+}
+
+void*
+get_shmem_access(int page_number)
+{
+  if(page_number < 0 || page_number > 3)
+    return NULL;
+
+  return (void*)0xABCD;  
+}
+
+
+
+
+
+
+
+
+
+

@@ -168,6 +168,9 @@ pde_t*          copyuvm(pde_t*, uint);
 void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
+void 		shmeminit(void);
+int             get_shmem_count(int);
+void*           get_shmem_access(int);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

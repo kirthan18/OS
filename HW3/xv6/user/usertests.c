@@ -1479,6 +1479,16 @@ bigargtest(void)
   wait();
 }
 
+void 
+shmem_count_test(void){
+  printf(1,"\nShared mem count of page 0 : %d", shmem_count(0));
+  printf(1,"\nShared mem count of page 1 : %d", shmem_count(1));
+  printf(1,"\nShared mem count of page 2 : %d", shmem_count(2));
+  printf(1,"\nShared mem count of page 3 : %d", shmem_count(3));
+  printf(1,"\nShared mem count of page 4 : %d", shmem_count(4));
+  printf(1,"\nShared mem count of page -1 : %d", shmem_count(-1));
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -1490,7 +1500,7 @@ main(int argc, char *argv[])
   }
   close(open("usertests.ran", O_CREATE));
 
-  bigargtest();
+  /*bigargtest();
   bsstest();
   sbrktest();
   validatetest();
@@ -1520,7 +1530,8 @@ main(int argc, char *argv[])
   forktest();
   bigdir(); // slow
 
-  exectest();
+  exectest();*/
+  shmem_count_test();
 
   exit();
 }
