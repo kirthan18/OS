@@ -158,6 +158,18 @@ fork(void)
  
   pid = np->pid;
   np->state = RUNNABLE;
+
+  if(proc -> has_shared_memory == 1)
+  {
+    np->has_shared_memory = 1;
+  }
+
+  for(i = 0; i < SHMEM_PAGES; i++)
+  {
+    np -> is_mem_shared[i] = proc->is_mem_shared[i];
+    if(proc->is_mem_shared[i] == 1)
+      my_shmem_count[i]++;
+  }
   safestrcpy(np->name, proc->name, sizeof(proc->name));
   return pid;
 }
@@ -170,6 +182,7 @@ exit(void)
 {
   struct proc *p;
   int fd;
+  int i;
 
   if(proc == initproc)
     panic("init exiting");
@@ -185,6 +198,14 @@ exit(void)
   iput(proc->cwd);
   proc->cwd = 0;
 
+  if(proc->has_shared_memory == 1)
+  {
+   for(i = 0; i < SHMEM_PAGES; i++)
+   {	   
+     if(proc->is_mem_shared[i] == 1)
+       my_shmem_count[i]--;
+   }
+  }
   acquire(&ptable.lock);
 
   // Parent might be sleeping in wait().

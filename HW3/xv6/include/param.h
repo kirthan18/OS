@@ -18,3 +18,6 @@
 #define SHMEM_PAGES   4  // number of shared memory pages
 
 #endif // _PARAM_H_
+
+int my_shmem_count[SHMEM_PAGES];
+void* my_shmem_addr[SHMEM_PAGES];

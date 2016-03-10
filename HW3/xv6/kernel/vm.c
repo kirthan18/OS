@@ -10,8 +10,8 @@ extern char data[];  // defined in data.S
 
 static pde_t *kpgdir;  // for use in scheduler()
 
-int shmem_count[SHMEM_PAGES];
-void* shmem_addr[SHMEM_PAGES];
+//int shmem_count[SHMEM_PAGES];
+//void* shmem_addr[SHMEM_PAGES];
 
 // Allocate one page table for the machine for the kernel address
 // space for scheduler processes.
@@ -290,7 +290,7 @@ freevm(pde_t *pgdir)
   uint i;
   int k = 0;
   int flag = 0;
-  int page = -1;
+  //int page = -1;
 
   if(pgdir == 0)
     panic("freevm: no pgdir");
@@ -302,15 +302,15 @@ freevm(pde_t *pgdir)
     if(pgdir[i] & PTE_P){
       for(k = 0; k < SHMEM_PAGES; k++)
       { 
-        if((char*)PTE_ADDR(pgdir[i]) == shmem_addr[k])
+        if((char*)PTE_ADDR(pgdir[i]) == my_shmem_addr[k])
 	  {
 	    flag = 1;
           }
       }	   
       if(flag != 1)
         kfree((char*)PTE_ADDR(pgdir[i]));
-      else
-        shmem_count[page]--;
+      /*else
+        my_shmem_count[page]--;*/
     }
   }
   kfree((char*)pgdir);
@@ -395,10 +395,10 @@ shmeminit()
   int i;
   for(i = 0; i < SHMEM_PAGES; i++)
   {
-    shmem_count[i] = 0;
-    if((shmem_addr[i] = kalloc()) == 0)
+    my_shmem_count[i] = 0;
+    if((my_shmem_addr[i] = kalloc()) == 0)
       panic("shmem init failed!\n");
-    cprintf("Address of page %d is %x.\n", i, (unsigned int)shmem_addr[i]);
+    cprintf("Address of page %d is %x.\n", i, (unsigned int)my_shmem_addr[i]);
   }
 }
 
@@ -408,7 +408,7 @@ get_shmem_count(int page_number)
   if(page_number < 0 || page_number > 3)
     return -1;
 
-  return shmem_count[page_number];  
+  return my_shmem_count[page_number];  
 }
 
 void*
@@ -438,13 +438,14 @@ get_shmem_access(int page_number)
   if(*pte & PTE_P)
     return (void*)virtual_address;
 
-  if(mappages(proc->pgdir, (void*)virtual_address, PGSIZE, (uint)shmem_addr[page_number], PTE_W|PTE_U) != 0)
+  if(mappages(proc->pgdir, (void*)virtual_address, PGSIZE, (uint)my_shmem_addr[page_number], PTE_W|PTE_U) != 0)
     {
       return NULL;
     }
 
-  shmem_count[page_number]++;
+  my_shmem_count[page_number]++;
   proc->has_shared_memory = 1;
+  proc->is_mem_shared[page_number] = 1;
   return (void*)virtual_address;  
 }
 
