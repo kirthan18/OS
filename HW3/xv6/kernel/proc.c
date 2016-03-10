@@ -34,7 +34,7 @@ allocproc(void)
 {
   struct proc *p;
   char *sp;
-
+  int i = 0;
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
     if(p->state == UNUSED)
@@ -45,6 +45,9 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->has_shared_memory = 0;
+  for(i = 0 ; i < SHMEM_PAGES; i++)
+    p->is_mem_shared[i] = 0;
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.

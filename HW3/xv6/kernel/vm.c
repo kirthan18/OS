@@ -87,7 +87,8 @@ mappages(pde_t *pgdir, void *la, uint size, uint pa, int perm)
   last = PGROUNDDOWN(la + size - 1);
   for(;;){
     pte = walkpgdir(pgdir, a, 1);
-    if(pte == 0)
+    //if(pte == 0 || (proc->has_shared_memory && ((*((int*)la)) + size - 1 > USERTOP - (PGSIZE * SHMEM_PAGES))))
+     if(pte == 0)
       return -1;
     if(*pte & PTE_P)
       panic("remap");
@@ -233,7 +234,8 @@ allocuvm(pde_t *pgdir, uint oldsz, uint newsz)
 {
   char *mem;
   uint a;
-
+  if(proc -> has_shared_memory == 1 && newsz > USERTOP - (SHMEM_PAGES * PGSIZE))
+    return 0;
   if(newsz > USERTOP)
     return 0;
   if(newsz < oldsz)
@@ -286,13 +288,30 @@ void
 freevm(pde_t *pgdir)
 {
   uint i;
+  int k = 0;
+  int flag = 0;
+  int page = -1;
 
   if(pgdir == 0)
     panic("freevm: no pgdir");
+
+  /*if(proc -> has_shared_memory)
+    deallocuvm(pgdir, USERTOP - (SHMEM_PAGES * PGSIZE),0);*/
   deallocuvm(pgdir, USERTOP, 0);
   for(i = 0; i < NPDENTRIES; i++){
-    if(pgdir[i] & PTE_P)
-      kfree((char*)PTE_ADDR(pgdir[i]));
+    if(pgdir[i] & PTE_P){
+      for(k = 0; k < SHMEM_PAGES; k++)
+      { 
+        if((char*)PTE_ADDR(pgdir[i]) == shmem_addr[k])
+	  {
+	    flag = 1;
+          }
+      }	   
+      if(flag != 1)
+        kfree((char*)PTE_ADDR(pgdir[i]));
+      else
+        shmem_count[page]--;
+    }
   }
   kfree((char*)pgdir);
 }
@@ -395,10 +414,38 @@ get_shmem_count(int page_number)
 void*
 get_shmem_access(int page_number)
 {
+  int virtual_address = -1;
+
   if(page_number < 0 || page_number > 3)
     return NULL;
+  
+  //If size of current process is greater than the first index of the address allocated to the page,
+  //return NULL, since heap is occupying the memory and we cannot allocate it.
+  if(proc->sz > (USERTOP - (PGSIZE * (page_number + 1))))
+    return (void*)NULL;
 
-  return (void*)0xABCD;  
+  virtual_address = USERTOP - (PGSIZE * (page_number + 1));
+  cprintf("\nIn get_shemem_access : virtual address : %d", virtual_address);
+  cprintf("\nIn get_shmem_access : page number : %d", page_number);
+  
+  pte_t *pte;
+  char *a = PGROUNDDOWN(virtual_address);
+
+  pte = walkpgdir(proc->pgdir, a, 1);
+  
+  //Check is page is already allocated; If so, return same virtual address without remapping
+  
+  if(*pte & PTE_P)
+    return (void*)virtual_address;
+
+  if(mappages(proc->pgdir, (void*)virtual_address, PGSIZE, (uint)shmem_addr[page_number], PTE_W|PTE_U) != 0)
+    {
+      return NULL;
+    }
+
+  shmem_count[page_number]++;
+  proc->has_shared_memory = 1;
+  return (void*)virtual_address;  
 }
 
 
