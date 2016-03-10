@@ -1,0 +1,15 @@
+In kernel folder,
+   To add a system call, modify the following files:
+  -> syscall.h
+  -> syscall.c
+  -> sysfunc.h
+
+  Add the system call function in sysproc.c
+
+  Call your function that does the required word in the system call written in sysproc.c.
+
+  Include the function you are calling in include/defs.h
+
+In user folder,
+   add system call name to usys.S
+   add system call name to user.h
