@@ -47,7 +47,10 @@ found:
   p->pid = nextpid++;
   p->has_shared_memory = 0;
   for(i = 0 ; i < SHMEM_PAGES; i++)
+  { 
     p->is_mem_shared[i] = 0;
+    p->shmem_map[i] = -1;
+  }
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -166,9 +169,11 @@ fork(void)
 
   for(i = 0; i < SHMEM_PAGES; i++)
   {
-    np -> is_mem_shared[i] = proc->is_mem_shared[i];
     if(proc->is_mem_shared[i] == 1)
-      my_shmem_count[i]++;
+    {
+      if(get_shmem_access_child(np, proc->shmem_map[i]) == NULL)
+        panic("Fork failed!");
+    }
   }
   safestrcpy(np->name, proc->name, sizeof(proc->name));
   return pid;

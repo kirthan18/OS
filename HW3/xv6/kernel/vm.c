@@ -415,18 +415,35 @@ void*
 get_shmem_access(int page_number)
 {
   int virtual_address = -1;
+  int next_free_page = -1;
+  int i = 0;
 
   if(page_number < 0 || page_number > 3)
     return NULL;
   
+  for(i = 0; i < SHMEM_PAGES; i++)
+  {
+    if(proc->shmem_map[i] == page_number)
+    {
+      return (void*)(USERTOP - (PGSIZE * (i + 1)));
+    }
+  }
+  for(i = 0; i < SHMEM_PAGES; i++)
+    if(proc->is_mem_shared[i] == 0)
+    {
+      next_free_page = i;
+      break;
+    }
+
+  
   //If size of current process is greater than the first index of the address allocated to the page,
   //return NULL, since heap is occupying the memory and we cannot allocate it.
-  if(proc->sz > (USERTOP - (PGSIZE * (page_number + 1))))
+  if(proc->sz > (USERTOP - (PGSIZE * (next_free_page + 1))))
     return (void*)NULL;
 
-  virtual_address = USERTOP - (PGSIZE * (page_number + 1));
+  virtual_address = USERTOP - (PGSIZE * (next_free_page + 1));
   cprintf("\nIn get_shemem_access : virtual address : %d", virtual_address);
-  cprintf("\nIn get_shmem_access : page number : %d", page_number);
+  cprintf("\nIn get_shmem_access : page number : %d", next_free_page);
   
   pte_t *pte;
   char *a = PGROUNDDOWN(virtual_address);
@@ -438,18 +455,37 @@ get_shmem_access(int page_number)
   if(*pte & PTE_P)
     return (void*)virtual_address;
 
-  if(mappages(proc->pgdir, (void*)virtual_address, PGSIZE, (uint)my_shmem_addr[page_number], PTE_W|PTE_U) != 0)
-    {
-      return NULL;
-    }
+  if(mappages(proc->pgdir, (void*)virtual_address, PGSIZE, (uint)my_shmem_addr[next_free_page], PTE_W|PTE_U) != 0)
+    return (void*)NULL;
 
-  my_shmem_count[page_number]++;
+  my_shmem_count[next_free_page]++;
   proc->has_shared_memory = 1;
-  proc->is_mem_shared[page_number] = 1;
+  proc->is_mem_shared[next_free_page] = 1;
+  proc->shmem_map[next_free_page] = page_number;
   return (void*)virtual_address;  
 }
 
+void*
+get_shmem_access_child(struct proc *child,int page_number)
+{
+  int virtual_address = USERTOP - (PGSIZE * (page_number + 1));
+  
+  if(child->sz > virtual_address) 
+    return (void*)NULL;
 
+  char *a = PGROUNDDOWN(virtual_address);
+  pte_t *pte = walkpgdir(child->pgdir, a, 1);
+  if(*pte & PTE_P)
+    return (void*)virtual_address;
+
+  if(mappages(child->pgdir, (void*)virtual_address, PGSIZE, (uint)my_shmem_addr[page_number], PTE_W|PTE_U) != 0)
+    return (void*)NULL;
+
+  child->has_shared_memory = 1;
+  child->is_mem_shared[page_number] = 1;
+  my_shmem_count[page_number]++;
+  return (void*)virtual_address; 
+}
 
 
 

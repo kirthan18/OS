@@ -32,25 +32,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -94,25 +95,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -133,7 +135,7 @@ $ tester
 tester
 bad dereference (0x0fff): pid 4 tester: trap 14 err 4 on cpu 1 eip 0x1062 addr 0xfff--kill proc
 TEST PASSED
-$ 
+
 
 test null2 PASSED (10 of 10)
  (any dereference from first page should fault)
@@ -156,25 +158,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 458 blocks have been allocated
+wc
+README
+balloc: first 480 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -186,15 +189,15 @@ lapicinit: 1 0xfee00000
 cpu1: starting
 cpu0: starting
 shmeminit()
-Address of page 0 is fe1000.
-Address of page 1 is fe0000.
-Address of page 2 is fdf000.
-Address of page 3 is fde000.
+Address of page 0 is fef000.
+Address of page 1 is fe3000.
+Address of page 2 is fe4000.
+Address of page 3 is fe5000.
 init: starting sh
 $ tester
 tester
 TEST PASSED
-$ 
+
 
 test bounds PASSED (10 of 10)
  (syscall argument checks (null page). ***NOTE*** only write system call is tested here; when grading, we may change the test to any other system call that may take a NULL pointer.)
@@ -217,25 +220,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -282,25 +286,100 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 458 blocks have been allocated
+wc
+README
+balloc: first 480 blocks have been allocated
+balloc: write bitmap block at sector 28
+rm user/bin/tester
+make qemu-nox 
+Ctrl+a h for help
+/u/c/s/cs537-2/ta/tools/qemu -nographic -hdb fs.img xv6.img -smp 2
+Could not open option rom 'sgabios.bin': No such file or directory
+xv6...
+lapicinit: 1 0xfee00000
+cpu1: starting
+cpu0: starting
+shmeminit()
+Address of page 0 is fe1000.
+Address of page 1 is fe0000.
+Address of page 2 is fef000.
+Address of page 3 is fe3000.
+init: starting sh
+$ tester
+tester
+
+In sys_shmem_access()
+In get_shemem_access : virtual address : 651264
+In get_shmem_access : page number : 0
+In sys_shmem_access()
+In get_shemem_access : virtual address : 647168
+In get_shmem_access : page number : 1
+In sys_shmem_access()
+In get_shemem_access : virtual address : 643072
+In get_shmem_access : page number : 2
+In sys_shmem_access()
+In get_shemem_access : virtual address : 638976
+In get_shmem_access : page number : 3TEST PASSED
+
+
+test shmem_access_return_value PASSED (10 of 10)
+ (shmem_access return value needs to be one of 4 pages of virtual address space; first access needs to return last virtual page, second access needs to return second to last virtual page, etc.)
+
+starting shmem_access_double_call
+
+**********************************************************************
+
+Test shmem_access_double_call
+shmem_access called twice with same page number, making sure same physical page is not mapped into 2 different places in virtual address space
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/3b/ctests/shmem_access_double_call.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 --output=user/bin/tester user/tester.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/tester fs/tester
+./tools/mkfs fs.img fs
+used 29 (bit 1 ninode 26) free 29 total 1024
+kill
+tester
+forktest
+sh
+rm
+ls
+cat
+ln
+rettest
+echo
+fault
+zombie
+init
+stressfs
+grep
+mkdir
+usertests
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -321,76 +400,9 @@ $ tester
 tester
 
 In sys_shmem_access()
-In get_shemem_access : virtual address : 643072
-In get_shmem_access : page number : 2TEST FAILED
-
-
-test shmem_access_return_value FAILED (0 of 10)
- (shmem_access return value needs to be one of 4 pages of virtual address space; first access needs to return last virtual page, second access needs to return second to last virtual page, etc.)
- tester failed
-
-starting shmem_access_double_call
-
-**********************************************************************
-
-Test shmem_access_double_call
-shmem_access called twice with same page number, making sure same physical page is not mapped into 2 different places in virtual address space
-
-**********************************************************************
-Running xv6 user progam /u/c/s/cs537-1/ta/tests/3b/ctests/shmem_access_double_call.c
-Trying to build project using make
-make
-gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
-		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
-gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
-ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 --output=user/bin/tester user/tester.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
-cp user/bin/tester fs/tester
-./tools/mkfs fs.img fs
-used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
-kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
-tester
-README
-rm
-ln
-zombie
-usertests
-balloc: first 457 blocks have been allocated
-balloc: write bitmap block at sector 28
-rm user/bin/tester
-make qemu-nox 
-Ctrl+a h for help
-/u/c/s/cs537-2/ta/tools/qemu -nographic -hdb fs.img xv6.img -smp 2
-Could not open option rom 'sgabios.bin': No such file or directory
-xv6...
-lapicinit: 1 0xfee00000
-cpu1: starting
-cpu0: starting
-shmeminit()
-Address of page 0 is fe1000.
-Address of page 1 is fef000.
-Address of page 2 is fe3000.
-Address of page 3 is fe4000.
-init: starting sh
-$ tester
-tester
-
-In sys_shmem_access()
-In get_shemem_access : virtual address : 638976
-In get_shmem_access : page number : 3
-In sys_shmem_access()
-In get_shemem_access : virtual address : 638976
-In get_shmem_access : page number : 3TEST PASSED
+In get_shemem_access : virtual address : 651264
+In get_shmem_access : page number : 0
+In sys_shmem_access()TEST PASSED
 
 
 test shmem_access_double_call PASSED (10 of 10)
@@ -414,25 +426,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -445,19 +458,19 @@ cpu1: starting
 cpu0: starting
 shmeminit()
 Address of page 0 is fe1000.
-Address of page 1 is fef000.
-Address of page 2 is fe3000.
-Address of page 3 is fe4000.
+Address of page 1 is fe0000.
+Address of page 2 is fdf000.
+Address of page 3 is fde000.
 init: starting sh
 $ tester
 tester
 
 In sys_shmem_access()
-In get_shemem_access : virtual address : 638976
-In get_shmem_access : page number : 3
+In get_shemem_access : virtual address : 651264
+In get_shmem_access : page number : 0
 In sys_shmem_access()
-In get_shemem_access : virtual address : 638976
-In get_shmem_access : page number : 3TEST PASSED
+In get_shemem_access : virtual address : 651264
+In get_shmem_access : page number : 0TEST PASSED
 
 
 test shmem_access_double_call_fork PASSED (10 of 10)
@@ -481,25 +494,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -532,7 +546,6 @@ In sys_shmem_access()
 In get_shemem_access : virtual address : 638976
 In get_shmem_access : page number : 3TEST PASSED
 
-
 test shmem_access_read_write PASSED (10 of 10)
  (making sure shared pages are readable and writable)
 
@@ -554,25 +567,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -587,15 +601,15 @@ shmeminit()
 Address of page 0 is fe1000.
 Address of page 1 is fe0000.
 Address of page 2 is fdf000.
-Address of page 3 is fde000.
+Address of page 3 is fef000.
 init: starting sh
 $ tester
 tester
 
 In sys_shmem_access()
-In get_shemem_access : virtual address : 643072
-In get_shmem_access : page number : 2TEST PASSED
-
+In get_shemem_access : virtual address : 651264
+In get_shmem_access : page number : 0pid 4 tester: trap 14 err 4 on cpu 0 eip 0x10ae addr 0x9f000--kill proc
+TEST PASSED
 
 test shmem_access_communication PASSED (10 of 10)
  (one process writing something and the other process reading it.)
@@ -618,25 +632,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -650,8 +665,8 @@ cpu0: starting
 shmeminit()
 Address of page 0 is fe1000.
 Address of page 1 is fe0000.
-Address of page 2 is fef000.
-Address of page 3 is fe3000.
+Address of page 2 is fdf000.
+Address of page 3 is fde000.
 init: starting sh
 $ tester
 tester
@@ -680,25 +695,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -710,10 +726,10 @@ lapicinit: 1 0xfee00000
 cpu1: starting
 cpu0: starting
 shmeminit()
-Address of page 0 is fe1000.
-Address of page 1 is fd9000.
-Address of page 2 is fd8000.
-Address of page 3 is fd7000.
+Address of page 0 is fef000.
+Address of page 1 is fe3000.
+Address of page 2 is fe4000.
+Address of page 3 is fe5000.
 init: starting sh
 $ tester
 tester
@@ -744,25 +760,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 458 blocks have been allocated
+wc
+README
+balloc: first 480 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -775,19 +792,19 @@ cpu1: starting
 cpu0: starting
 shmeminit()
 Address of page 0 is fe1000.
-Address of page 1 is fef000.
-Address of page 2 is fe3000.
-Address of page 3 is fe4000.
+Address of page 1 is fe0000.
+Address of page 2 is fdf000.
+Address of page 3 is fde000.
 init: starting sh
 $ tester
 tester
 
 In sys_shmem_access()
-In get_shemem_access : virtual address : 638976
-In get_shmem_access : page number : 3
+In get_shemem_access : virtual address : 651264
+In get_shmem_access : page number : 0
 In sys_shmem_access()
-In get_shemem_access : virtual address : 638976
-In get_shmem_access : page number : 3TEST FAILED
+In get_shemem_access : virtual address : 651264
+In get_shmem_access : page number : 0TEST FAILED
 
 
 test shmem_access_persistent FAILED (0 of 10)
@@ -818,25 +835,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 458 blocks have been allocated
+wc
+README
+balloc: first 480 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester user/bin/echo
 make qemu-nox 
@@ -869,7 +887,7 @@ In sys_shmem_access()
 In get_shemem_access : virtual address : 638976
 In get_shmem_access : page number : 3pid 4 echo: trap 14 err 6 on cpu 1 eip 0x1053 addr 0x9f000--kill proc
 TEST PASSED
-
+$ 
 
 test shmem_access_exec PASSED (10 of 10)
  (a new exec-ed program should not have access to shared pages when it begins.)
@@ -898,25 +916,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 458 blocks have been allocated
+wc
+README
+balloc: first 480 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester user/bin/echo
 make qemu-nox 
@@ -931,7 +950,7 @@ shmeminit()
 Address of page 0 is fe1000.
 Address of page 1 is fe0000.
 Address of page 2 is fdf000.
-Address of page 3 is fef000.
+Address of page 3 is fde000.
 init: starting sh
 $ tester
 tester
@@ -949,18 +968,17 @@ In sys_shmem_access()
 In get_shemem_access : virtual address : 638976
 In get_shmem_access : page number : 3
 In sys_shmem_access()
-In get_shemem_access : virtual address : 638976
-In get_shmem_access : page number : 3
-In sys_shmem_access()
-In get_shemem_access : virtual address : 643072
-In get_shmem_access : page number : 2
+In get_shemem_access : virtual address : 651264
+In get_shmem_access : page number : 0
 In sys_shmem_access()
 In get_shemem_access : virtual address : 647168
 In get_shmem_access : page number : 1
 In sys_shmem_access()
-In get_shemem_access : virtual address : 651264
-In get_shmem_access : page number : 0TEST PASSED
-
+In get_shemem_access : virtual address : 643072
+In get_shmem_access : page number : 2
+In sys_shmem_access()
+In get_shemem_access : virtual address : 638976
+In get_shmem_access : page number : 3TEST PASSED
 
 test shmem_access_exec2 PASSED (10 of 10)
  (a new exec-ed program should reallocate virtual pages if shmem_access is called.)
@@ -983,25 +1001,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 459 blocks have been allocated
+wc
+README
+balloc: first 481 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -1013,19 +1032,18 @@ lapicinit: 1 0xfee00000
 cpu1: starting
 cpu0: starting
 shmeminit()
-Address of page 0 is fef000.
-Address of page 1 is fe3000.
-Address of page 2 is fe4000.
-Address of page 3 is fe5000.
+Address of page 0 is fe1000.
+Address of page 1 is fe0000.
+Address of page 2 is fdf000.
+Address of page 3 is fde000.
 init: starting sh
 $ tester
 tester
 
 In sys_shmem_access()
-In get_shemem_access : virtual address : 638976
-In get_shmem_access : page number : 3write system call failed to take a pointer from within a shared page
+In get_shemem_access : virtual address : 651264
+In get_shmem_access : page number : 0write system call failed to take a pointer from within a shared page
 TEST FAILED
-
 
 test shmem_access_syscall_args FAILED (0 of 10)
  (making sure pointers from shared pages can be successfully passed to system calls. ***NOTE*** only open and write system calls are tested here; when grading, we may change the test to any other system call that may take pointers.)
@@ -1049,25 +1067,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -1081,8 +1100,8 @@ cpu0: starting
 shmeminit()
 Address of page 0 is fe1000.
 Address of page 1 is fe0000.
-Address of page 2 is fef000.
-Address of page 3 is fe3000.
+Address of page 2 is fdf000.
+Address of page 3 is fde000.
 init: starting sh
 $ tester
 tester
@@ -1091,7 +1110,7 @@ In sys_shmem_count()
 In sys_shmem_count()
 In sys_shmem_count()
 In sys_shmem_count()TEST PASSED
-
+$ 
 
 test shmem_count_invalid_input PASSED (10 of 10)
  (shmem_count invalid input test)
@@ -1114,25 +1133,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -1145,9 +1165,9 @@ cpu1: starting
 cpu0: starting
 shmeminit()
 Address of page 0 is fe1000.
-Address of page 1 is fef000.
-Address of page 2 is fe3000.
-Address of page 3 is fe4000.
+Address of page 1 is fe0000.
+Address of page 2 is fdf000.
+Address of page 3 is fde000.
 init: starting sh
 $ tester
 tester
@@ -1179,25 +1199,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -1210,9 +1231,9 @@ cpu1: starting
 cpu0: starting
 shmeminit()
 Address of page 0 is fe1000.
-Address of page 1 is fef000.
-Address of page 2 is fe3000.
-Address of page 3 is fe4000.
+Address of page 1 is fe0000.
+Address of page 2 is fdf000.
+Address of page 3 is fde000.
 init: starting sh
 $ tester
 tester
@@ -1260,25 +1281,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -1291,9 +1313,9 @@ cpu1: starting
 cpu0: starting
 shmeminit()
 Address of page 0 is fe1000.
-Address of page 1 is fef000.
-Address of page 2 is fe3000.
-Address of page 3 is fe4000.
+Address of page 1 is fe0000.
+Address of page 2 is fef000.
+Address of page 3 is fe3000.
 init: starting sh
 $ tester
 tester
@@ -1337,25 +1359,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -1367,10 +1390,10 @@ lapicinit: 1 0xfee00000
 cpu1: starting
 cpu0: starting
 shmeminit()
-Address of page 0 is fe1000.
-Address of page 1 is fe0000.
-Address of page 2 is fd7000.
-Address of page 3 is fd6000.
+Address of page 0 is fef000.
+Address of page 1 is fe3000.
+Address of page 2 is fe4000.
+Address of page 3 is fe5000.
 init: starting sh
 $ tester
 tester
@@ -1379,29 +1402,21 @@ In sys_shmem_access()
 In get_shemem_access : virtual address : 651264
 In get_shmem_access : page number : 0
 In sys_shmem_access()
-In get_shemem_access : virtual address : 651264
-In get_shmem_access : page number : 0
 In sys_shmem_count()
 In sys_shmem_access()
 In get_shemem_access : virtual address : 647168
 In get_shmem_access : page number : 1
 In sys_shmem_access()
-In get_shemem_access : virtual address : 647168
-In get_shmem_access : page number : 1
 In sys_shmem_count()
 In sys_shmem_access()
 In get_shemem_access : virtual address : 643072
 In get_shmem_access : page number : 2
 In sys_shmem_access()
-In get_shemem_access : virtual address : 643072
-In get_shmem_access : page number : 2
 In sys_shmem_count()
 In sys_shmem_access()
 In get_shemem_access : virtual address : 638976
 In get_shmem_access : page number : 3
 In sys_shmem_access()
-In get_shemem_access : virtual address : 638976
-In get_shmem_access : page number : 3
 In sys_shmem_count()TEST PASSED
 
 
@@ -1426,25 +1441,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 457 blocks have been allocated
+wc
+README
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox 
@@ -1480,7 +1496,7 @@ In sys_shmem_count()
 In sys_shmem_count()
 In sys_shmem_count()
 In sys_shmem_count()TEST PASSED
-
+$ 
 
 test shmem_count_fork PASSED (10 of 10)
  (shmem_count should return 2 after fork if the parent process has accessed a shared page.)
@@ -1509,25 +1525,26 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x1000 
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-sh
-fault
 kill
-grep
-wc
-stressfs
-forktest
-init
-mkdir
-cat
-ls
-echo
 tester
-README
+forktest
+sh
 rm
+ls
+cat
 ln
+rettest
+echo
+fault
 zombie
+init
+stressfs
+grep
+mkdir
 usertests
-balloc: first 458 blocks have been allocated
+wc
+README
+balloc: first 480 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester user/bin/echo
 make qemu-nox 
@@ -1597,9 +1614,8 @@ test bounds PASSED (10 of 10)
 test shmem_access_invalid_input PASSED (10 of 10)
  (shmem_access invalid input test)
 
-test shmem_access_return_value FAILED (0 of 10)
+test shmem_access_return_value PASSED (10 of 10)
  (shmem_access return value needs to be one of 4 pages of virtual address space; first access needs to return last virtual page, second access needs to return second to last virtual page, etc.)
- tester failed
 
 test shmem_access_double_call PASSED (10 of 10)
  (shmem_access called twice with same page number, making sure same physical page is not mapped into 2 different places in virtual address space)
@@ -1654,6 +1670,6 @@ test shmem_count_fork PASSED (10 of 10)
 test shmem_count_exec PASSED (10 of 10)
  (Exec should decrement count for shared pages. Parent accesses a shared page, then it forks. Child performs exec to start a new program. In the new program, the count for the shared page should be 1.)
 
-Passed 20 of 23 tests.
-Overall 20 of 23
-Points 190 of 220
+Passed 21 of 23 tests.
+Overall 21 of 23
+Points 200 of 220

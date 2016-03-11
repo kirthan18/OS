@@ -11,6 +11,7 @@ USER_PROGS := \
 	ln\
 	ls\
 	mkdir\
+        rettest\
 	rm\
 	sh\
 	stressfs\
