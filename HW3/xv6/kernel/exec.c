@@ -86,6 +86,15 @@ exec(char *path, char **argv)
   proc->sz = sz;
   proc->tf->eip = elf.entry;  // main
   proc->tf->esp = sp;
+
+  proc->has_shared_memory = 0;
+  for(i = 0; i < SHMEM_PAGES; i++)
+  {
+    if(proc->is_mem_shared[i] == 1)
+      my_shmem_count[i]--;  
+    proc->is_mem_shared[i] = 0;
+  }
+
   switchuvm(proc);
   freevm(oldpgdir);
 
