@@ -17,7 +17,7 @@
 int
 fetchint(struct proc *p, uint addr, int *ip)
 { 
-  if(p->shared != 0 && (addr >= (USERTOP - p->shared * PGSIZE)) && ((addr + 4) < USERTOP))
+  if(p->has_shared_memory == 1 && (addr >= (USERTOP - SHMEM_PAGES * PGSIZE)) && ((addr + 4) < USERTOP))
   {
     *ip = *(int*)(addr);
     return 0;
@@ -38,7 +38,7 @@ fetchstr(struct proc *p, uint addr, char **pp)
   char *s, *ep;
   //cprintf("\n Address in fetchstr = %d", addr);
   
-  if(p->shared != 0 && (addr >= (USERTOP - p->shared * PGSIZE)) && (addr < USERTOP))
+  if(p->has_shared_memory == 1 && (addr >= (USERTOP - PGSIZE * SHMEM_PAGES)) && (addr < USERTOP))
   {
     *pp = (char*)addr;
     ep = (char*)USERTOP;
@@ -77,11 +77,13 @@ argptr(int n, char **pp, int size)
   //cprintf("\n Address in argint = %d", i);
   if(i >= 0 && i <= 4095)
     return -1; 
-  if(proc->shared != 0 && ((uint)i >= (USERTOP-proc->shared*PGSIZE)) && (((uint)i + size) < USERTOP) ){
-     *pp = (char*)i;
+  
+  if(proc->has_shared_memory == 1 && ((uint)i >= (USERTOP - SHMEM_PAGES * PGSIZE)) && (((uint)i + size) < USERTOP))
+  {
+    *pp = (char*)i;
     return 0;
   }
-  if((uint)i >= proc->sz || (uint)i+size > proc->sz )
+  if((uint)i >= proc->sz || (uint)i+size > proc->sz)
     return -1;
   *pp = (char*)i;
   return 0;
