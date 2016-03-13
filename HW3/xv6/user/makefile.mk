@@ -2,6 +2,7 @@
 # user programs
 USER_PROGS := \
 	cat\
+	comm\
 	echo\
 	forktest\
 	fault\
@@ -11,9 +12,11 @@ USER_PROGS := \
 	ln\
 	ls\
 	mkdir\
+	persistent\
         rettest\
 	rm\
 	sh\
+	shmem_access_read_write\
 	stressfs\
 	tester\
 	usertests\

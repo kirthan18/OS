@@ -27,6 +27,7 @@ int sleep(int);
 int uptime(void);
 int shmem_count(int);
 void *shmem_access(int);
+void *get_base_addr_shmem(void);
 
 // user library functions (ulib.c)
 int stat(char*, struct stat*);

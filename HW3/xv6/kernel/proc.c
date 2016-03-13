@@ -34,7 +34,7 @@ allocproc(void)
 {
   struct proc *p;
   char *sp;
-  int i = 0;
+  int idx = 0;
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
     if(p->state == UNUSED)
@@ -45,12 +45,9 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  p->has_shared_memory = 0;
-  for(i = 0 ; i < SHMEM_PAGES; i++)
-  { 
-    p->is_mem_shared[i] = 0;
-    p->shmem_map[i] = -1;
-  }
+ p->shared = 0;
+  for(idx = 0; idx<SHMEM_PAGES; idx++)
+    p->shared_idx[idx] = -1;
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -133,7 +130,7 @@ growproc(int n)
 int
 fork(void)
 {
-  int i, pid;
+  int i,idx, pid;
   struct proc *np;
 
   // Allocate process.
@@ -162,19 +159,15 @@ fork(void)
   pid = np->pid;
   np->state = RUNNABLE;
 
-  if(proc -> has_shared_memory == 1)
-  {
-    np->has_shared_memory = 1;
-  }
-
-  for(i = 0; i < SHMEM_PAGES; i++)
-  {
-    if(proc->is_mem_shared[i] == 1)
-    {
-      if(get_shmem_access_child(np, proc->shmem_map[i]) == NULL)
-        panic("Fork failed!");
+   if(proc->shared == 1) //If parent is accessing the shared pages, child should also access shared pages.
+    np->shared = 1;
+  for(idx=0; idx<SHMEM_PAGES; idx++){ //If a particular page is shared with parent, we share it with child and increment the count.
+	if(proc->shared_idx[idx] != -1){ 
+	  if(get_shmem_access_child(np, idx, proc->shared_idx[idx]) == NULL)
+		panic("Issue with my code of fork.");
     }
-  }
+  } 
+
   safestrcpy(np->name, proc->name, sizeof(proc->name));
   return pid;
 }
@@ -187,7 +180,7 @@ exit(void)
 {
   struct proc *p;
   int fd;
-  int i;
+
 
   if(proc == initproc)
     panic("init exiting");
@@ -203,14 +196,12 @@ exit(void)
   iput(proc->cwd);
   proc->cwd = 0;
 
-  if(proc->has_shared_memory == 1)
-  {
-   for(i = 0; i < SHMEM_PAGES; i++)
-   {	   
-     if(proc->is_mem_shared[i] == 1)
-       my_shmem_count[i]--;
-   }
+ int idx;
+  for(idx = 0; idx<SHMEM_PAGES; idx++){
+	if(proc->shared_idx[idx] != -1)
+      my_shmem_count[idx]--;
   }
+  
   acquire(&ptable.lock);
 
   // Parent might be sleeping in wait().

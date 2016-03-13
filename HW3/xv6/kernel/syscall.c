@@ -17,7 +17,7 @@
 int
 fetchint(struct proc *p, uint addr, int *ip)
 { 
-  if(p->has_shared_memory == 1 && (addr >= (USERTOP - SHMEM_PAGES * PGSIZE)) && ((addr + 4) < USERTOP))
+  if(p->shared == 1 && (addr >= (USERTOP - SHMEM_PAGES * PGSIZE)) && ((addr + 4) < USERTOP))
   {
     *ip = *(int*)(addr);
     return 0;
@@ -38,14 +38,14 @@ fetchstr(struct proc *p, uint addr, char **pp)
   char *s, *ep;
   //cprintf("\n Address in fetchstr = %d", addr);
   
-  if(p->has_shared_memory == 1 && (addr >= (USERTOP - PGSIZE * SHMEM_PAGES)) && (addr < USERTOP))
+  if(p->shared == 1 && (addr >= (USERTOP - PGSIZE * SHMEM_PAGES)) && (addr < USERTOP))
   {
     *pp = (char*)addr;
     ep = (char*)USERTOP;
     for(s = *pp; s < ep; s++)
       if(*s == 0)
         return s - *pp;
-    //return -1;
+     return -1;
   }
   if(addr >= p->sz)
     return -1;
@@ -127,6 +127,7 @@ static int (*syscalls[])(void) = {
 [SYS_uptime]  sys_uptime,
 [SYS_shmem_count] sys_shmem_count,
 [SYS_shmem_access] sys_shmem_access,
+[SYS_get_base_addr_shmem] sys_get_base_addr_shmem,
 };
 
 // Called on a syscall trap. Checks that the syscall number (passed via eax)

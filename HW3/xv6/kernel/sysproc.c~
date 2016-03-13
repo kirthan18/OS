@@ -110,3 +110,9 @@ sys_shmem_access(void)
   }
   return (int)get_shmem_access(page_number);
 }
+
+int
+sys_get_base_addr_shmem(void)
+{
+  return (int)get_base_addr_shmem1();
+}

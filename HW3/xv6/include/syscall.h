@@ -25,5 +25,6 @@
 #define SYS_uptime 21
 #define SYS_shmem_count 22
 #define SYS_shmem_access 23
+#define SYS_get_base_addr_shmem 24
 
 #endif // _SYSCALL_H_
