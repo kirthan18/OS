@@ -7,9 +7,6 @@
 #include <pthread.h>
 
 int max_size = 0;
-char* (*fetch_func)(char *url);
-void (*edge_func)(char *from, char *to);
-
 
 pthread_mutex_t link_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t page_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -73,7 +70,7 @@ void put_page(char *page_content)
 
 		if(page_head == NULL)
 		{
-			printf("Inserting at head of the page queue!\n");
+			printf("Inserting at head of the page queue!");
 			page_head = new_page;
 		}else
 		{
@@ -125,46 +122,6 @@ void parse_page(char* page)
 	}
 }
 
-void *download_routine(void *args)
-{
-	char *link_to_download;
-	char *fetched_page;
-
-	pthread_mutex_lock(&link_mutex);
-	while(links_count == 0)
-	{
-		pthread_cond_wait(&link_full, &link_mutex);
-	}
-	link_to_download = strdup(get_links());
-	printf("Link obtained to download : %s\n", link_to_download);
-	pthread_cond_signal(&link_empty);
-	pthread_mutex_unlock(&link_mutex);
-
-	fetched_page = fetch_func(link_to_download);
-
-	//WHat to do here if several threads are trying to put downloaded data in page queue? is mutex enough?
-	pthread_mutex_lock(&page_mutex);
-	put_page(fetched_page);
-	pthread_mutex_unlock(&page_mutex);
-	return (void*)NULL;
-}
-
-void *parse_routine(void *args)
-{
-	char *page_to_parse;
-
-	pthread_mutex_lock(&page_mutex);
-	while(page_count == 0)
-	{
-		pthread_cond_wait(&page_empty, &page_mutex);
-	}
-	page_to_parse = get_page();
-	pthread_mutex_unlock(&page_mutex);
-	parse_page(page_to_parse);
-	
-	return (void*)NULL;
-}
-
 int crawl(char *start_url,
 	  int download_workers,
 	  int parse_workers,
@@ -176,17 +133,11 @@ int crawl(char *start_url,
   int j = 0;
   int return_value = 0;
 
-  fetch_func = _fetch_fn;
-
   char* page = _fetch_fn(start_url);
   assert(page != NULL);
 
   pthread_t *download_workers_t;
   pthread_t *parse_workers_t;
-
-
-  download_workers_t = malloc(sizeof(pthread_t) * download_workers);
-  parse_workers_t = malloc(sizeof(pthread_t) * parse_workers);
 
   max_size = queue_size;
   links = (struct_links*)malloc(queue_size * sizeof(struct_links));
@@ -194,8 +145,7 @@ int crawl(char *start_url,
   put_links(start_url);
   for(i = 0; i < download_workers; i++)
   {
-  	return_value = pthread_create(&download_workers_t[i], NULL, download_routine, NULL);
-  	printf("*****Creating download worker thread %d returned : %d*****\n", i, return_value);
+  	return_value = pthread_create(i, NULL, download_routine, NULL);
 
   	if(return_value < 0)
   	{
@@ -205,8 +155,7 @@ int crawl(char *start_url,
 
   for(j = 0; j < parse_workers; j++)
   {
-  	return_value = pthread_create(&parse_workers_t[j], NULL, parse_routine, NULL);
-  	printf("*****Creating parse worker thread %d returned : %d*****\n", j, return_value);
+  	return_value = pthread_create(j, NULL, parse_routine, NULL);
 
   	if(return_value < 0)
   	{
