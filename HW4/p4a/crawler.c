@@ -186,7 +186,7 @@ void parse_page(char* page)
 	char* save;
 	char* p;
 	char *b;
-	int should_add_link = -1;
+	int should_add_link = 1;
 
 	printf("\n\n\n////////////////////Parsing page %s////////////////////", page);
 	for (p = strtok_r(page, delim, &save); p; p = strtok_r(NULL, delim, &save))
@@ -196,7 +196,7 @@ void parse_page(char* page)
 		{
 			b = p + 5;
 			printf("\nIn parse_page : Link points to : %s\n", b);
-			should_add_link = insert_hash(b);
+			//should_add_link = insert_hash(b);
 			printf("\nIn parse_page : insert_hash return value = %d\n", should_add_link);
 			if(should_add_link == 1)
 			{
@@ -236,9 +236,10 @@ void *download_routine(void *args)
 	//WHat to do here if several threads are trying to put downloaded data in page queue? is mutex enough?
 	pthread_mutex_lock(&page_mutex);
 	put_page(fetched_page);
+	printf("Signalling page_empty\n");
 	pthread_cond_signal(&page_empty);
 	pthread_mutex_unlock(&page_mutex);
-	free(fetched_page);
+	//free(fetched_page);
 	return (void*)NULL;
 }
 
@@ -249,8 +250,10 @@ void *parse_routine(void *args)
 	pthread_mutex_lock(&page_mutex);
 	while(page_count == 0)
 	{
+		printf("Parse_rountine: Waiting on page_empty\n");
 		pthread_cond_wait(&page_empty, &page_mutex);
 	}
+	printf("Parse_routine: Got the signal\n");
 	page_to_parse = get_page();
 	pthread_mutex_unlock(&page_mutex);
 	parse_page(page_to_parse);
@@ -310,7 +313,7 @@ int crawl(char *start_url,
   	}
   }
 
-
+  while(1);
   //parse_page(page);
   //printf("\nPage : %s\n", page);
   //free(page);
