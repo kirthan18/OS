@@ -10,7 +10,6 @@ int max_size = 0;
 char* (*fetch_func)(char *url);
 void (*edge_func)(char *from, char *to);
 
-
 pthread_mutex_t link_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t page_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t hashset_mutex = PTHREAD_MUTEX_INITIALIZER;
