@@ -205,7 +205,7 @@ page* get_page()
 void parse_page(page* page_to_parse)
 {	
 	const char* delim = " \n";
-	const char* link = "link:";
+	//const char* link = "link:";
 	char* save;
 	char* p;
 	char *b;
@@ -217,7 +217,8 @@ void parse_page(page* page_to_parse)
 	for (p = strtok_r(page_to_parse->page_content, delim, &save); p; p = strtok_r(NULL, delim, &save))
 	{
 		//printf("\nIn parse_page : Token = %s\n", p);
-		if(strstr(p, link) != NULL)
+		//if(strstr(p, link) != NULL)
+		if(strlen(p) >= 5 && p[0] == 'l' && p[1] == 'i' && p[2] == 'n' && p[3] == 'k' && p[4] == ':')
 		{
 			should_add_link = -1;
 			b = p + 5;
