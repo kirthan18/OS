@@ -1,0 +1,473 @@
+starting build
+
+**********************************************************************
+
+Test build
+build xv6 using make
+
+**********************************************************************
+Trying to build project using make
+make
+make: Nothing to be done for `all'.
+
+
+test build PASSED
+ (build xv6 using make)
+
+starting clone
+
+**********************************************************************
+
+Test clone
+clone and verify that address space is shared
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/clone.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:32: error: implicit declaration of function ‘clone’
+make: *** [user/tester.o] Error 1
+
+
+test clone FAILED (0 of 9)
+ (clone and verify that address space is shared)
+ make failed (error 2)
+
+starting badclone
+
+**********************************************************************
+
+Test badclone
+clone with bad stack argument
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/badclone.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:31: error: implicit declaration of function ‘clone’
+make: *** [user/tester.o] Error 1
+
+
+test badclone FAILED (0 of 6)
+ (clone with bad stack argument)
+ make failed (error 2)
+
+starting join4
+
+**********************************************************************
+
+Test join4
+join, not wait, should handle threads
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/join4.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:34: error: implicit declaration of function ‘clone’
+user/tester.c:41: error: implicit declaration of function ‘join’
+make: *** [user/tester.o] Error 1
+
+
+test join4 FAILED (0 of 3)
+ (join, not wait, should handle threads)
+ make failed (error 2)
+
+starting thread2
+
+**********************************************************************
+
+Test thread2
+memory leaks from thread library?
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/thread2.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:31: error: implicit declaration of function ‘thread_create’
+user/tester.c:33: error: implicit declaration of function ‘thread_join’
+make: *** [user/tester.o] Error 1
+
+
+test thread2 FAILED (0 of 7)
+ (memory leaks from thread library?)
+ make failed (error 2)
+
+starting join3
+
+**********************************************************************
+
+Test join3
+join should not handle child processes (forked)
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/join3.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:33: error: implicit declaration of function ‘join’
+make: *** [user/tester.o] Error 1
+
+
+test join3 FAILED (0 of 3)
+ (join should not handle child processes (forked))
+ make failed (error 2)
+
+starting join2
+
+**********************************************************************
+
+Test join2
+join argument checking
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/join2.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:34: error: implicit declaration of function ‘clone’
+user/tester.c:39: error: implicit declaration of function ‘join’
+make: *** [user/tester.o] Error 1
+
+
+test join2 FAILED (0 of 6)
+ (join argument checking)
+ make failed (error 2)
+
+starting clone3
+
+**********************************************************************
+
+Test clone3
+clone copies file descriptors, but doesn't share
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/clone3.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:36: error: implicit declaration of function ‘clone’
+make: *** [user/tester.o] Error 1
+
+
+test clone3 FAILED (0 of 3)
+ (clone copies file descriptors, but doesn't share)
+ make failed (error 2)
+
+starting clone2
+
+**********************************************************************
+
+Test clone2
+clone and play with the argument
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/clone2.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:33: error: implicit declaration of function ‘clone’
+make: *** [user/tester.o] Error 1
+
+
+test clone2 FAILED (0 of 6)
+ (clone and play with the argument)
+ make failed (error 2)
+
+starting stack
+
+**********************************************************************
+
+Test stack
+set up stack correctly (and without extra items)
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/stack.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:32: error: implicit declaration of function ‘clone’
+make: *** [user/tester.o] Error 1
+
+
+test stack FAILED (0 of 8)
+ (set up stack correctly (and without extra items))
+ make failed (error 2)
+
+starting size
+
+**********************************************************************
+
+Test size
+check that address space size is updated in threads
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/size.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+user/tester.c:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘lock’
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:35: error: implicit declaration of function ‘lock_init’
+user/tester.c:35: error: ‘lock’ undeclared (first use in this function)
+user/tester.c:35: error: (Each undeclared identifier is reported only once
+user/tester.c:35: error: for each function it appears in.)
+user/tester.c:36: error: ‘lock2’ undeclared (first use in this function)
+user/tester.c:37: error: implicit declaration of function ‘lock_acquire’
+user/tester.c:42: error: implicit declaration of function ‘thread_create’
+user/tester.c:49: error: implicit declaration of function ‘lock_release’
+user/tester.c:68: error: implicit declaration of function ‘thread_join’
+user/tester.c: In function ‘worker’:
+user/tester.c:78: error: ‘lock’ undeclared (first use in this function)
+user/tester.c:83: error: ‘lock2’ undeclared (first use in this function)
+make: *** [user/tester.o] Error 1
+
+
+test size FAILED (0 of 7)
+ (check that address space size is updated in threads)
+ make failed (error 2)
+
+starting multi
+
+**********************************************************************
+
+Test multi
+multiple threads with some depth of function calls
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/multi.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:47: error: implicit declaration of function ‘thread_create’
+user/tester.c:52: error: implicit declaration of function ‘thread_join’
+make: *** [user/tester.o] Error 1
+
+
+test multi FAILED (0 of 8)
+ (multiple threads with some depth of function calls)
+ make failed (error 2)
+
+starting noexit
+
+**********************************************************************
+
+Test noexit
+no exit call in thread, should trap at bogus address
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/noexit.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:30: error: implicit declaration of function ‘thread_create’
+user/tester.c:33: error: implicit declaration of function ‘thread_join’
+make: *** [user/tester.o] Error 1
+
+
+test noexit FAILED (0 of 7)
+ (no exit call in thread, should trap at bogus address)
+ make failed (error 2)
+
+starting join
+
+**********************************************************************
+
+Test join
+clone and join syscalls
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/join.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:34: error: implicit declaration of function ‘clone’
+user/tester.c:38: error: implicit declaration of function ‘join’
+make: *** [user/tester.o] Error 1
+
+
+test join FAILED (0 of 9)
+ (clone and join syscalls)
+ make failed (error 2)
+
+starting thread
+
+**********************************************************************
+
+Test thread
+thread user library functions
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/thread.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:29: error: implicit declaration of function ‘thread_create’
+user/tester.c:32: error: implicit declaration of function ‘thread_join’
+make: *** [user/tester.o] Error 1
+
+
+test thread FAILED (0 of 10)
+ (thread user library functions)
+ make failed (error 2)
+
+starting locks
+
+**********************************************************************
+
+Test locks
+test lock correctness
+
+**********************************************************************
+Running xv6 user progam /u/c/s/cs537-1/ta/tests/4b/tests/locks.c
+Trying to build project using make
+make
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/tester.c -MF user/tester.d -MT user/tester.d -MT user/tester.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/tester.o user/tester.c
+user/tester.c:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘lock’
+cc1: warnings being treated as errors
+user/tester.c: In function ‘main’:
+user/tester.c:32: error: implicit declaration of function ‘lock_init’
+user/tester.c:32: error: ‘lock’ undeclared (first use in this function)
+user/tester.c:32: error: (Each undeclared identifier is reported only once
+user/tester.c:32: error: for each function it appears in.)
+user/tester.c:36: error: implicit declaration of function ‘thread_create’
+user/tester.c:41: error: implicit declaration of function ‘thread_join’
+user/tester.c: In function ‘worker’:
+user/tester.c:55: error: implicit declaration of function ‘lock_acquire’
+user/tester.c:55: error: ‘lock’ undeclared (first use in this function)
+user/tester.c:59: error: implicit declaration of function ‘lock_release’
+make: *** [user/tester.o] Error 1
+
+
+test locks FAILED (0 of 8)
+ (test lock correctness)
+ make failed (error 2)
+
+**********************************************************************
+Summary:
+test build PASSED
+ (build xv6 using make)
+
+test clone FAILED (0 of 9)
+ (clone and verify that address space is shared)
+ make failed (error 2)
+
+test badclone FAILED (0 of 6)
+ (clone with bad stack argument)
+ make failed (error 2)
+
+test join4 FAILED (0 of 3)
+ (join, not wait, should handle threads)
+ make failed (error 2)
+
+test thread2 FAILED (0 of 7)
+ (memory leaks from thread library?)
+ make failed (error 2)
+
+test join3 FAILED (0 of 3)
+ (join should not handle child processes (forked))
+ make failed (error 2)
+
+test join2 FAILED (0 of 6)
+ (join argument checking)
+ make failed (error 2)
+
+test clone3 FAILED (0 of 3)
+ (clone copies file descriptors, but doesn't share)
+ make failed (error 2)
+
+test clone2 FAILED (0 of 6)
+ (clone and play with the argument)
+ make failed (error 2)
+
+test stack FAILED (0 of 8)
+ (set up stack correctly (and without extra items))
+ make failed (error 2)
+
+test size FAILED (0 of 7)
+ (check that address space size is updated in threads)
+ make failed (error 2)
+
+test multi FAILED (0 of 8)
+ (multiple threads with some depth of function calls)
+ make failed (error 2)
+
+test noexit FAILED (0 of 7)
+ (no exit call in thread, should trap at bogus address)
+ make failed (error 2)
+
+test join FAILED (0 of 9)
+ (clone and join syscalls)
+ make failed (error 2)
+
+test thread FAILED (0 of 10)
+ (thread user library functions)
+ make failed (error 2)
+
+test locks FAILED (0 of 8)
+ (test lock correctness)
+ make failed (error 2)
+
+Passed 1 of 16 tests.
+Overall 1 of 16
+Points 0 of 100

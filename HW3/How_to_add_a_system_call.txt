@@ -8,7 +8,7 @@ In kernel folder,
 
   Call your function that does the required word in the system call written in sysproc.c.
 
-  Include the function you are calling in include/defs.h
+  Include the function you are calling in kernel/defs.h
 
 In user folder,
    add system call name to usys.S
