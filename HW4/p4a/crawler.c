@@ -148,8 +148,6 @@ void put_page(char *page_content, char *page_name)
 	page *curr;
 	page *prev;	
 
-	//printf("\nIn put_page : Page name : %s", page_name);
-
 	page *new_page = (page*)malloc(sizeof(page));
 	
 	if(new_page != NULL)
@@ -162,25 +160,18 @@ void put_page(char *page_content, char *page_name)
 
 		if(page_head == NULL)
 		{
-			//printf("\nIn put_page : Inserting at head of the page queue!\n");
 			page_head = new_page;
-			//printf("\nIn put_page : Page name : %s", page_head->page_name);
-			//printf("\n%s\n", page_head->page);
 		}else
 		{
 			prev = NULL;
 			curr = page_head;
 
-			//printf("\nTraversing page queue");
-
 			while(curr != NULL)
 			{
-				//printf("Page queue element : %s", curr->page_name);
 				prev = curr;
 				curr = curr->next_page;
 			}
 			prev->next_page = new_page;
-			//printf("\nIn put_page : Page name : %s", curr->next_page->page_name);
 		}
 		page_count++;
 		//printf("\nIn put_page : page count : %d\n", page_count);
@@ -205,18 +196,13 @@ page* get_page()
 void parse_page(page* page_to_parse)
 {	
 	const char* delim = " \n";
-	//const char* link = "link:";
 	char* save;
 	char* p;
 	char *b;
 	int should_add_link = -1;
-	//page *curr = NULL;
-	//int i = 0;
-
-	//printf("\n\n\n////////////////////Parsing page %s////////////////////", page_to_parse->page_name);
+	
 	for (p = strtok_r(page_to_parse->page_content, delim, &save); p; p = strtok_r(NULL, delim, &save))
 	{
-		//printf("\nIn parse_page : Token = %s\n", p);
 		//if(strstr(p, link) != NULL)
 		if(strlen(p) >= 5 && p[0] == 'l' && p[1] == 'i' && p[2] == 'n' && p[3] == 'k' && p[4] == ':')
 		{
@@ -233,28 +219,9 @@ void parse_page(page* page_to_parse)
 				pthread_mutex_unlock(&main_mutex);				
 
 				pthread_mutex_lock(&link_mutex);
-				/*printf("Contents of links queue:\n");
-					for(i = 0; i < max_size; i++)
-					{
-						printf("Link[%d] = %s\n", i, links[i].link);
-					}*/
-				
 				
 				while(links_count == max_size)
 				{
-					/*printf("\nFill ptr = %d and use ptr = %d and links_count = %d", fill_links, use_links, links_count);
-					printf("\n~~~~~Waiting for links queue to become empty~~~~~\n");
-					printf("Contents of page queue:\n");
-					curr = page_head;
-					if(page_head == NULL)
-					{
-						printf("\nPage queue head is null!");
-					}
-					while(curr != NULL)
-					{
-						printf("Page queue contains = %s\n", curr->page_name);
-						curr = curr->next_page;
-					}*/
 					pthread_cond_wait(&link_empty, &link_mutex);
 				}
 				//printf("Links queue is NOT FULL NOW!\n");
@@ -271,35 +238,30 @@ void *download_routine(void *args)
 	char *link_to_download;
 	char *fetched_page;
 
-	while(1){
-	//printf("\nDOWNLOAD routine running!\n");
-	pthread_mutex_lock(&link_mutex);
-	while(links_count == 0)
+	while(1)
 	{
-		//printf("In download_routine : Waiting\n");
-		//printf("\nFill ptr = %d and use ptr = %d and links_count = %d", fill_links, use_links, links_count);
-		//printf("\n~~~~~Waiting for links queue to have some link~~~~~\n");
-		pthread_cond_wait(&link_full, &link_mutex);
-	}
-	//printf("Links queue is NOT EMPTY NOW!\n");
-	link_to_download = get_links();
-	//printf("\nIn download_routine : Link obtained to download : %s\n", link_to_download);
-	pthread_cond_signal(&link_empty);
-	pthread_mutex_unlock(&link_mutex);
+	
+		pthread_mutex_lock(&link_mutex);
+		while(links_count == 0)
+		{
+			pthread_cond_wait(&link_full, &link_mutex);
+		}
+		//printf("Links queue is NOT EMPTY NOW!\n");
+		link_to_download = get_links();
+		//printf("\nIn download_routine : Link obtained to download : %s\n", link_to_download);
+		pthread_cond_signal(&link_empty);
+		pthread_mutex_unlock(&link_mutex);
 
-	fetched_page = fetch_func(link_to_download);
-	//printf("\nFetched page: %s", fetched_page);
-	assert(fetched_page != NULL);
+		fetched_page = fetch_func(link_to_download);
+		//printf("\nFetched page: %s", fetched_page);
+		assert(fetched_page != NULL);
 
-	//WHat to do here if several threads are trying to put downloaded data in page queue? is mutex enough?
-	pthread_mutex_lock(&page_mutex);
-	//printf("Some PROBLEM here!!\n");
-	put_page(fetched_page, link_to_download);
-	//printf("Signalling page_empty\n");
-	pthread_cond_signal(&page_empty);
-	pthread_mutex_unlock(&page_mutex);
+		pthread_mutex_lock(&page_mutex);
+		put_page(fetched_page, link_to_download);
+		//printf("Signalling page_empty\n");
+		pthread_cond_signal(&page_empty);
+		pthread_mutex_unlock(&page_mutex);
 	}
-	//free(fetched_page);
 	return (void*)NULL;
 }
 
@@ -307,42 +269,30 @@ void *parse_routine(void *args)
 {
 	page *page_to_parse;
 
-	while(1){
-	pthread_mutex_lock(&page_mutex);
-	while(page_count == 0 || page_head == NULL)
+	while(1)
 	{
-		//printf("Parse_rountine: Waiting on page_empty\n");
-		//printf("\nPage_count = %d", page_count);
-		//printf("\n~~~~~Waiting for page queue to have some page~~~~~\n");
-		pthread_cond_wait(&page_empty, &page_mutex);
-	}
-	//printf("Parse_routine: Got the signal\n");
+		pthread_mutex_lock(&page_mutex);
+		while(page_count == 0 || page_head == NULL)
+		{
+			pthread_cond_wait(&page_empty, &page_mutex);
+		}
+		//printf("Parse_routine: Got the signal\n");
+		
+		page_to_parse = get_page();
 
-	//printf("Contents of page queue:\n");
-
-	/*page *curr = page_head;
-	if(curr == NULL)
-		printf("HEAD IS NULL\n");
-	while(curr != NULL)
-	{
-		printf("Page name : %s\n", curr->page_name);
-		curr = curr->next_page;
+		//printf("\n%s\n", page_to_parse->page_content);
+		//printf("\nIn parse routine : Page name : %s", page_to_parse->page_name);
+		pthread_mutex_unlock(&page_mutex);
+		parse_page(page_to_parse);
+		
+		pthread_mutex_lock(&main_mutex);
+		remaining--;
+		if(remaining <= 0)
+		{
+			pthread_cond_signal(&main_cond);
+		}
+		pthread_mutex_unlock(&main_mutex);
 	}
-	*/
-	page_to_parse = get_page();
-	//printf("\n%s\n", page_to_parse->page_content);
-	//printf("\nIn parse routine : Page name : %s", page_to_parse->page_name);
-	pthread_mutex_unlock(&page_mutex);
-	parse_page(page_to_parse);
-	
-	pthread_mutex_lock(&main_mutex);
-	remaining--;
-	if(remaining <= 0)
-	{
-		pthread_cond_signal(&main_cond);
-	}
-	pthread_mutex_unlock(&main_mutex);
-}
 	return (void*)NULL;
 }
 
@@ -369,11 +319,9 @@ int crawl(char *start_url,
   max_size = queue_size;
   links = (struct_links*)malloc(queue_size * sizeof(struct_links));
 
-  //pthread_mutex_lock(&link_mutex);
   put_links(start_url);
   insert_hash(start_url);
-  //pthread_cond_signal(&link_full);
-  //pthread_mutex_unlock(&link_mutex);
+ 
   remaining = 1;
 
   for(i = 0; i < download_workers; i++)
@@ -399,10 +347,5 @@ int crawl(char *start_url,
   }
 
   pthread_cond_wait(&main_cond, &main_mutex);
-
-  //while(1);
-  //parse_page(page);
-  //printf("\nPage : %s\n", page);
-  //free(page);
   return 0;
 }
