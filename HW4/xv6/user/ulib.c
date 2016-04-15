@@ -3,6 +3,7 @@
 #include "fcntl.h"
 #include "user.h"
 #include "x86.h"
+#define PGSIZE (4096)
 
 char*
 strcpy(char *s, char *t)
@@ -103,3 +104,47 @@ memmove(void *vdst, void *vsrc, int n)
     *dst++ = *src++;
   return vdst;
 }
+
+//Lock initialization method
+void lock_init(lock_t *lock) 
+{
+  lock->flag = 0;
+}
+
+//Lock acqusition method using xchg operation
+void lock_acquire(lock_t *lock) 
+{
+  while(xchg(&lock->flag, 1) != 0);
+}
+
+//Lock release method using xchg operation
+void lock_release(lock_t *lock) 
+{
+  xchg(&lock->flag, 0);
+}
+
+int thread_create(void (*func) (void *), void *args)
+{
+  void *stack;
+
+  stack = (void*)malloc(2*PGSIZE);
+  if((uint)stack % PGSIZE)
+  {
+    stack = stack + (PGSIZE - (uint)stack % PGSIZE);
+  }
+  
+  return clone(func, args, stack);
+}
+
+int thread_join()
+{
+  int return_value;
+  void *stack;
+
+  return_value = join(&stack);
+  free(stack);
+
+  return return_value; 
+}
+
+

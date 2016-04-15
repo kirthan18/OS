@@ -10,4 +10,6 @@ In addition to this, we maintain a linked list of links that have already been v
 
 We have used conditional variables and mutex to signal and wait for locks and to maintain atomicity in executing the critical sections.
 
+Part B: xv6 Threads
 
+In this project, we have added a thread library to the xv6 OS. This is done using locks and also using two system calls clone() and join(). The locks are implemented using the xchg instruction which makes sure the lock acquisition and release happens atomically. The clone() system call is similar to the fork() and join() is similar to wait(). The clone system call creates a new process with same address space as that of its  parent and  with a new user stack. When clone returns the execution of new process will begin from thread routine which is set as the next instruction pointer while creating the new process. The join system call makes the calling process wait for the thread to complete execution. 
