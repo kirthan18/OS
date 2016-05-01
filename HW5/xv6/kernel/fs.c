@@ -365,7 +365,7 @@ itrunc(struct inode *ip)
   struct buf *bp;
   uint *a;
 
-  /*if(ip->type == T_SMALLFILE)
+  if(ip->type == T_SMALLFILE)
   {
     for(i = 0; i <= NDIRECT; i++){
       if(ip->addrs[i]){
@@ -375,7 +375,7 @@ itrunc(struct inode *ip)
     ip->size = 0;
     iupdate(ip);
     return;
-  }*/
+  }
 
   for(i = 0; i < NDIRECT; i++){
     if(ip->addrs[i]){
@@ -418,8 +418,8 @@ readi(struct inode *ip, char *dst, uint off, uint n)
   uint tot, m;
   struct buf *bp;
 
-  if(ip->type == T_SMALLFILE)
-    cprintf("\nOffset = %d, number of bytes = %d\n", off, n);
+  //if(ip->type == T_SMALLFILE)
+    //cprintf("\nOffset = %d, number of bytes = %d\n", off, n);
   if(ip->type == T_DEV){
     if(ip->major < 0 || ip->major >= NDEV || !devsw[ip->major].read)
       return -1;
@@ -432,14 +432,14 @@ readi(struct inode *ip, char *dst, uint off, uint n)
     n = ip->size - off;
 
 
-  if(ip->type == T_SMALLFILE)
-    cprintf("\nOffset = %d, number of bytes = %d\n", off, n);
+  //if(ip->type == T_SMALLFILE)
+    //cprintf("\nOffset = %d, number of bytes = %d\n", off, n);
   //If file size is less than (NDIRECT+1)*4 bytes, it is stored in inode; read directly
   if(ip->type == T_SMALLFILE)
   {
-    cprintf("\nReading small file\n");
+    /*cprintf("\nReading small file\n");
     cprintf("File size : %d\n", ip->size);
-    cprintf("Offset = %d, number of bytes = %d\n", off, n);
+    cprintf("Offset = %d, number of bytes = %d\n", off, n);*/
     //Truncating number of bytes to 52 if n exceeds the space of 53 bytes
     if(off + n > ((NDIRECT + 1) * 4))
     {
@@ -448,7 +448,7 @@ readi(struct inode *ip, char *dst, uint off, uint n)
 
     //printf("\nip->size - off = %d\n"ip->size - off);
    
-    cprintf("Final n : %d\n", n);
+    //cprintf("Final n : %d\n", n);
     memmove(dst, &(ip->addrs[0])+off, n);
     return n;
   }
@@ -487,20 +487,20 @@ writei(struct inode *ip, char *src, uint off, uint n)
 
   if(ip->type == T_SMALLFILE)
   {
-    cprintf("\nWriting to a small file\n");
-    cprintf("\nOffset = %d, number of bytes = %d\n", off, n);
+    /*cprintf("\nWriting to a small file\n");
+    cprintf("Offset = %d, number of bytes = %d\n", off, n);*/
     //Truncating number of bytes to 52 if n exceeds the space of 53 bytes
     if(off + n > ((NDIRECT + 1) * 4))
     {
       n = ((NDIRECT + 1) * 4) - off;
     }
-    cprintf("\nFinal n : %d\n", n);
+    //cprintf("Final n : %d\n", n);
     memmove(&ip->addrs[0] + off, src, n);
     if(n > 0){
       ip->size = n;
     }
     iupdate(ip);
-    cprintf("\nFile size : %d\n", ip->size);
+    //cprintf("File size : %d\n", ip->size);
     return n;
   }
   /*if(n < (NDIRECT+1)*4)
