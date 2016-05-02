@@ -418,8 +418,6 @@ readi(struct inode *ip, char *dst, uint off, uint n)
   uint tot, m;
   struct buf *bp;
 
-  //if(ip->type == T_SMALLFILE)
-    //cprintf("\nOffset = %d, number of bytes = %d\n", off, n);
   if(ip->type == T_DEV){
     if(ip->major < 0 || ip->major >= NDEV || !devsw[ip->major].read)
       return -1;
@@ -431,15 +429,12 @@ readi(struct inode *ip, char *dst, uint off, uint n)
   if(off + n > ip->size)
     n = ip->size - off;
 
-
-  //if(ip->type == T_SMALLFILE)
-    //cprintf("\nOffset = %d, number of bytes = %d\n", off, n);
   //If file size is less than (NDIRECT+1)*4 bytes, it is stored in inode; read directly
   if(ip->type == T_SMALLFILE)
   {
-    cprintf("\nReading small file\n");
+    /*cprintf("\nReading small file\n");
     cprintf("File size : %d\n", ip->size);
-    cprintf("Offset = %d, number of bytes = %d\n", off, n);
+    cprintf("Offset = %d, number of bytes = %d\n", off, n);*/
     //Truncating number of bytes to 52 if n exceeds the space of 53 bytes
     /*if(off + n > ((NDIRECT + 1) * 4))
     {
@@ -448,9 +443,9 @@ readi(struct inode *ip, char *dst, uint off, uint n)
 
     //printf("\nip->size - off = %d\n"ip->size - off);
    
-    cprintf("Final n : %d\n", n);
+    //cprintf("Final n : %d\n", n);
     memmove(dst, (void*)((uint)ip->addrs+off), n);
-    cprintf("Character read : %c\n", dst);
+    //cprintf("Character read : %c\n", dst);
     return n;
   }
 
@@ -488,8 +483,8 @@ writei(struct inode *ip, char *src, uint off, uint n)
 
   if(ip->type == T_SMALLFILE)
   {
-    cprintf("\nWriting to a small file\n");
-    cprintf("Offset = %d, number of bytes = %d\n", off, n);
+    /*cprintf("\nWriting to a small file\n");
+    cprintf("Offset = %d, number of bytes = %d\n", off, n);*/
     //Truncating number of bytes to 52 if n exceeds the space of 52 bytes
     if(off + n > ((NDIRECT + 1) * 4))
     {
@@ -497,12 +492,12 @@ writei(struct inode *ip, char *src, uint off, uint n)
     }
     //cprintf("Final n : %d\n", n);
     memmove((void*) ((uint)ip->addrs + off), src, n);
-    cprintf("Character written : %c\n", src);
+    //cprintf("Character written : %c\n", src);
     if(n > 0){
       ip->size = off + n;
     }
     iupdate(ip);
-    cprintf("File size : %d\n", ip->size);
+    //cprintf("File size : %d\n", ip->size);
     return n;
   }
   
