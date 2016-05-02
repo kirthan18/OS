@@ -437,19 +437,20 @@ readi(struct inode *ip, char *dst, uint off, uint n)
   //If file size is less than (NDIRECT+1)*4 bytes, it is stored in inode; read directly
   if(ip->type == T_SMALLFILE)
   {
-    /*cprintf("\nReading small file\n");
+    cprintf("\nReading small file\n");
     cprintf("File size : %d\n", ip->size);
-    cprintf("Offset = %d, number of bytes = %d\n", off, n);*/
+    cprintf("Offset = %d, number of bytes = %d\n", off, n);
     //Truncating number of bytes to 52 if n exceeds the space of 53 bytes
-    if(off + n > ((NDIRECT + 1) * 4))
+    /*if(off + n > ((NDIRECT + 1) * 4))
     {
       n = ((NDIRECT + 1) * 4) - off;
-    }
+    }*/
 
     //printf("\nip->size - off = %d\n"ip->size - off);
    
-    //cprintf("Final n : %d\n", n);
-    memmove(dst, &(ip->addrs[0])+off, n);
+    cprintf("Final n : %d\n", n);
+    memmove(dst, (void*)((uint)ip->addrs+off), n);
+    cprintf("Character read : %c\n", dst);
     return n;
   }
 
@@ -487,42 +488,24 @@ writei(struct inode *ip, char *src, uint off, uint n)
 
   if(ip->type == T_SMALLFILE)
   {
-    /*cprintf("\nWriting to a small file\n");
-    cprintf("Offset = %d, number of bytes = %d\n", off, n);*/
-    //Truncating number of bytes to 52 if n exceeds the space of 53 bytes
+    cprintf("\nWriting to a small file\n");
+    cprintf("Offset = %d, number of bytes = %d\n", off, n);
+    //Truncating number of bytes to 52 if n exceeds the space of 52 bytes
     if(off + n > ((NDIRECT + 1) * 4))
     {
       n = ((NDIRECT + 1) * 4) - off;
     }
     //cprintf("Final n : %d\n", n);
-    memmove(&ip->addrs[0] + off, src, n);
+    memmove((void*) ((uint)ip->addrs + off), src, n);
+    cprintf("Character written : %c\n", src);
     if(n > 0){
-      ip->size = n;
+      ip->size = off + n;
     }
     iupdate(ip);
-    //cprintf("File size : %d\n", ip->size);
+    cprintf("File size : %d\n", ip->size);
     return n;
   }
-  /*if(n < (NDIRECT+1)*4)
-  {
-    uint sector_number = bmap(ip, off/BSIZE);
-    if(sector_number == 0){ //failed to find block
-      n = tot; //return number of bytes written so far
-      break;
-    }
-
-    bp = bread(ip->dev, sector_number);
-    memmove(&(ip->addrs[0]), src, n);
-    bwrite(bp);
-    brelse(bp);
-
-    if(n > 0 && off > ip->size){
-    ip->size = off;
-    iupdate(ip);
-    }
-
-    return n;
-  }*/
+  
 
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
     uint sector_number = bmap(ip, off/BSIZE);
